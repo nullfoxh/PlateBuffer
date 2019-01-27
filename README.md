@@ -22,13 +22,11 @@ To display buffs on a nameplate we need to identify the nameplate first. This is
 
 ## Technical limitations
 
-There are many limitations with the TBC client compared to later versions, which makes an addon such as this more difficult to achieve. 
-
-The TBC client's Combatlog events are incomplete with some not firing and others lacking source guids. UnitBuff is lacking caster data and durations also. Due to these limitations, we can only track one instance of each spell and we need to rely on a database for durations outside of our own auras. We also can't account for talented durations.
+There are many limitations with the TBC client compared to later versions, which makes an addon such as this more difficult to achieve. The TBC client's Combatlog events are incomplete with some not firing and others lacking source guids. UnitBuff is lacking caster data and durations also. Due to these limitations, we can only track one instance of each spell and we need to rely on a database for durations outside of our own auras. We also can't account for talented durations.
 
 ## Known issues
 
-The cooldown spiral texture will flicker when a nameplate moves. This seems to be unfixable without creating a custom texture. I will add an option to disable the texture soon.
+The cooldown texture will flicker when a nameplate moves. This seems to be unfixable without creating a custom texture. I will add an option to disable the texture soon.
 
 ## To-do
 
