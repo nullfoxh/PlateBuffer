@@ -1,6 +1,6 @@
 # PlateBuffer
 
-### Please note that this is a BETA release and as such it will at times print messages to your chat if it's lacking data for a spell. Please report these to me so that I can add the spells to the database!
+### Please note that this is a BETA release and as such it might at times print a message to your chat if it's lacking data for a spell. Please report these to me here or on Discord: null#0010 so that I can add the spells to the database!
 
 ![Screenshot](PlateBuffer.png)
 
@@ -18,7 +18,9 @@ Since this is a beta release, you will have to clone/download this repo, rename 
 
 ## How does it work - Technical details
 
-To display buffs on a nameplate we need to identify the nameplate first. This is possible by targeting a unit, mouseovering a nameplate, by unit name (only for players) or raid target markers. Naturally we need to track unit buffs as well, this is done by parsing the combatlog events and Unitbuff calls on the UNIT_AURA event. The TBC client does not have aura durations for anything but the players spells so we need to have a database of those and also track diminishing returns so those can be applied to the durations also.
+To display buffs on a nameplate we need to identify the nameplate first. This is possible by targeting a unit, mouseovering a nameplate, by unit name (only for players) or raid target markers. If a unit walks off screen or you turn the camera so that the nameplate disappears, it needs to be identified again.
+
+Naturally we need to track unit buffs as well, this is done by parsing the combatlog events and Unitbuff calls on the UNIT_AURA event. The TBC client does not have aura durations for anything but the players spells so we need to have a database of those and also track diminishing returns so those can be applied to the durations also.
 
 ## Technical limitations
 
