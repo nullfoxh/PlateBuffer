@@ -1,0 +1,15 @@
+## Interface: 20400
+## Title: |cffa0f6aaPlateBuffer|r
+## Notes: Nameplate buffs for TBC 2.4.3
+## Author: null
+## Version: 1.0
+## SavedVariables: PBCONF
+
+
+libs\LibStub-1.0\LibStub-1.0.lua
+libs\DRData-1.0\DRData-1.0.lua
+
+cd.xml
+auras.lua
+config.lua
+core.lua

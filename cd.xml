@@ -1,0 +1,3 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Cooldown name="PlateBufferCD" inherits="CooldownFrameTemplate" drawEdge="true" virtual="true"/>
+</Ui>
