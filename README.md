@@ -37,6 +37,7 @@ The cooldown texture will flicker when a nameplate moves. This seems to be unfix
 
 ## Credits and acknowledgements
 
-* Much love to Elyne from the Netherwing discord for helping me with testing the addon and for gathering and filling aura data.
+* Much love to Elyne for helping me with testing the addon and for gathering and filling aura data.
 * Pyralis for letting me butcher his config GUI code.
 * Cyprias for his LibAuraInfo, which I based my aura database on.
+* Theroxis for helping me debug!

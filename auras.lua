@@ -2472,7 +2472,7 @@ PBAD.auraInfo = {
 	[71] = "0;0", -- Defensive Stance
 	[2457] = "0;0", --Battle Stance
 	[2458] = "0;0", -- Berserker Stance
-	[25274] = "3;0", -- Intercept Stun
+	[25274] = "3;0", -- Intercept Stun 5
 	[25212] = "15;0", -- Hamstring 4
 	[3411] = "10;0", -- Intervene 
 	[25208] = "21;0", -- Rend 8
@@ -2658,6 +2658,11 @@ PBAD.auraInfo = {
 	[10193] = "60;1", -- Mana Shield 
 	[39419] = "10;3", -- Poison Spit 
 	[32064] = "120;0", -- Battle Shout 
+
+	[34827] = "600;1", -- Water Shield 
+	[15062] = "10;0", -- Shield Wall 
+	[30195] = "3;0", -- Intercept Stun 2
+	[25273] = "3;0", -- Intercept Stun 4
 
 
 	

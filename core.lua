@@ -677,8 +677,17 @@
 		frame.level = levelText
 		frame.highlight = highlight
 
-		frame:SetScript("OnShow", PlateOnShow)
-		frame:SetScript("OnHide", PlateOnHide)
+		if frame:GetScript("OnShow") then
+			frame:HookScript("OnShow", PlateOnShow)
+		else
+			frame:SetScript("OnShow", PlateOnShow)
+		end
+
+		if frame:GetScript("OnHide") then
+			frame:HookScript("OnHide", PlateOnShow)
+		else
+			frame:SetScript("OnHide", PlateOnShow)
+		end
 		frame.pbsetup = true
 		PlateOnShow(frame)
 	end
