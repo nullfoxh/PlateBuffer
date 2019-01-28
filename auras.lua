@@ -1,4 +1,4 @@
-	
+
 	--[[
 
 		PlateBuffer
@@ -2687,7 +2687,8 @@ PBAD.auraInfo = {
 	[24579] = "4;0", -- Screech 4
 	[27051] = "4;0", -- Screech 5
 	[6798] = "3;0", -- Bash 2
-
+	[34259] = "4;1", -- Fear (mob ability)
+	[30413] = "2;1", -- Shadowfury 2
 
 	
 
@@ -2933,7 +2934,7 @@ PBAD.auraInfo = {
     [37340] = "15;0", -- Ursine Blessing 
     [15494] = "10;0", -- Fury of Forgewright
     [5024] = "10;0", -- Flee
-    [30283] = "2;1", -- Shadowfury 
+    [30283] = "2;1", -- Shadowfury 1
     [17626] = "7200;0", -- Flask of the Titans
     [33265] = "1800;0", -- Well Fed
     [37445] = "15;0", -- Mana Surge
