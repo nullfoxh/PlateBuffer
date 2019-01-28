@@ -1,4 +1,4 @@
-	
+
 	--[[
 
 		PlateBuffer
@@ -578,14 +578,14 @@
 	function PB:PLAYER_TARGET_CHANGED()
 		targetPlate = nil
 		targetGUID = nil
-		hasTarget = UnitExists("target") == 1 
+		hasTarget = UnitCanAttack("player", "target") == 1
 		if hasTarget then
 			updateTarget = true
 		end
 	end
 
 	function PB:UPDATE_MOUSEOVER_UNIT()
-		if UnitExists("mouseover") then
+		if UnitCanAttack("player", "mouseover") == 1 then
 			updateMouseOver = true
 		end
 	end
@@ -784,7 +784,7 @@
 
 	function PB:UpdateTargetPlate()
 		updateTarget = false
-		if UnitExists("target") then
+		if UnitCanAttack("player", "target") == 1 then
 			targetGUID = UnitGUID("target")
 
 			local plate = PB:GetTargetPlate()
@@ -798,7 +798,7 @@
 
 	function PB:UpdateMouseOverPlate()
 		updateMouseOver = false
-		if UnitExists("mouseover") then
+		if UnitCanAttack("player", "mouseover") == 1 then
 			mouseGUID = UnitGUID("mouseover")
 
 			local plate
