@@ -122,6 +122,8 @@
 			["Pyroclasm"] = "all",
 			["Backlash"] = "all",
 			["Shadow Trance"] = "all",
+			["Fel Domination"] = "all",
+			["Shadow Ward"] = "all",
 
 			-- Priest
 			["Mind Control"] = "all",
@@ -255,7 +257,7 @@
 			["Poison Spit"] = "all", -- Serpent
 			["Scorpid Poison"] = "all",
 			["Boar Charge"] = "all",
-			["Screech"] = "all", -- Bat / Bird of Prey / Carrion Bird
+			--["Screech"] = "all", -- Bat / Bird of Prey / Carrion Bird
 			["Fire Breath"] = "all", -- Dragonhawk
 
 			-- Shaman
