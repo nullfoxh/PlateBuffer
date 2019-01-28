@@ -637,7 +637,7 @@
 		end
 	end
 
-	local function PlateOnHide(frame, visible)
+	local function PlateOnHide(frame)
 		if frame.pbguid then
 			knownPlates[frame.pbguid] = nil
 			frame.pbguid = nil
@@ -661,11 +661,7 @@
 			end
 		end
 
-		if visible then
-			PlateOnShow(frame)
-		else
-			visiblePlates[frame] = nil
-		end
+		visiblePlates[frame] = nil
 	end
 
 	local function SetupPlate(frame)
@@ -735,9 +731,11 @@
 	---------------------------------------------------------------------------------------------
 
 	function PB:OnPlateIdentified(plate, guid, override)
-		if knownPlates[guid] and plate ~= knownPlates[guid] then
+		local old = knownPlates[guid]
+		if old and plate ~= old then
 			if override then
-				PlateOnHide(plate, true)
+				PlateOnHide(old)
+				PlateOnShow(old)
 			else
 				return
 			end
