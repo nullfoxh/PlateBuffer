@@ -1,30 +1,31 @@
 # PlateBuffer
 
-### Please note that this is a BETA release and as such it might at times print a message to your chat if it's lacking data for a spell. Please report these to me here or on Discord: null#0010 so that I can add the spells to the database!
+### Please note that this is a BETA release and it might at times print a message to your chat if it's lacking data for a spell. Please report these to me here or on Discord: null#0010 so that I can add the spells to the database!
 
 ![Screenshot](PlateBuffer.png)
 
 ## What does it do
 
-PlateBuffer adds aura icons to enemy unit nameplates. You can configure what buffs and debuffs you want to track; if you want to see only yours or ones applied by others also. Currently it will only track auras that have a duration. The addon does not change your nameplates, only adds buffs to them, so you can use it with the default nameplates, Aloft, ElvUI or others.
+PlateBuffer adds aura icons to enemy unit nameplates. You can choose which buffs and debuffs you want to see. It will track auras that have a duration. The addon does not change your nameplates, only adds buffs to them so it works with the default nameplates, Aloft, ElvUI and others.
 
 ## How to configure
 
-Type /pb or /platebuffer in game to bring up the config menu. To track new spells click inside the editbox and press enter to make a new line, type in the spells name followed by '/mine' or '/all' depending whose auras you want to track. E.g: 'Curse of Agony/mine'. For dots and other spells that can have multiple instances I recommend only tracking your own.
+Type /pb or /platebuffer in game to bring up the config menu. To track new spells click inside the editbox and press enter to make a new line, type in the name of the spell followed by '/mine' or '/all' depending whose auras you want to track. E.g: 'Curse of Agony/mine'. 
+For dots and other spells that can have multiple instances I recommend only tracking your own.
 
 ## How to install
 
 Since this is a beta release, you will have to clone/download this repo, rename the folder to PlateBuffer and place it in your AddOns folder.
 
-## How does it work - Technical details
+## How does it work
 
-To display buffs on a nameplate we need to identify the nameplate first. This is possible by targeting a unit, mouseovering a nameplate, by unit name (only for players) or raid target markers. If a unit walks off screen or you turn the camera so that the nameplate disappears, it needs to be identified again.
+To display auras on a nameplate we need to identify the nameplate first. This is done by targeting a unit, mouseovering a nameplate, by unit name (only for players) or raid target markers. If a unit walks offscreen or you turn the camera so that the nameplate is hidden, it needs to be identified again before auras can be shown!
 
-Naturally we need to track unit buffs as well, this is done by parsing the combatlog events and Unitbuff calls on the UNIT_AURA event. The TBC client does not have aura durations for anything but the players spells so we need to have a database of those and also track diminishing returns so those can be applied to the durations also.
+Spell durations and DRs are tracked by listening to the UNIT_AURA event as well as combat log events. A database of spell durations and debufftypes is utilized for this.
 
 ## Technical limitations
 
-There are many limitations with the TBC client compared to later versions, which makes an addon such as this more difficult to achieve. The TBC client's Combatlog events are incomplete with some not firing and others lacking source guids. UnitBuff is lacking caster data and durations also. Due to these limitations, we can only track one instance of each spell and we need to rely on a database for durations outside of our own auras. We also can't account for talented durations.
+The TBC client's API is quite limited compared to later versions with both the Combatlog and UnitBuff missing a lot of data. This means we can only track one instance of each spell and we need to rely on a database for durations outside of our own auras. We also can not account for talented durations.
 
 ## Known issues
 
