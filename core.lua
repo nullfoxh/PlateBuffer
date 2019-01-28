@@ -684,9 +684,9 @@
 		end
 
 		if frame:GetScript("OnHide") then
-			frame:HookScript("OnHide", PlateOnShow)
+			frame:HookScript("OnHide", PlateOnHide)
 		else
-			frame:SetScript("OnHide", PlateOnShow)
+			frame:SetScript("OnHide", PlateOnHide)
 		end
 		frame.pbsetup = true
 		PlateOnShow(frame)
