@@ -47,6 +47,8 @@
 			fontOffx = 1,
 			fontOffy = 1,
 			auraList = {},
+			disableDuration = false,
+			disableCooldown = false,
 		}
 		PBCONF.profiles[pname] = profile
 		return profile
@@ -312,6 +314,10 @@
 			_G["PlateBufferInput10"]:SetText(PBCONF.profiles[profile].auraOffx)
 			_G["PlateBufferInput11"]:SetText(PBCONF.profiles[profile].auraOffy)
 
+			-- These will be nil on old installations, but should still work just fine.
+			_G["PlateBufferCheckbox1"]:SetChecked(PBCONF.activeprofile.disableDuration)
+			_G["PlateBufferCheckbox2"]:SetChecked(PBCONF.activeprofile.disableCooldown)
+
 			local list = {}
 			for k,v in pairs(PBCONF.profiles[profile].auraList) do
 				list[#list+1] = k.."/"..v
@@ -505,7 +511,7 @@
 		guiFrame:SetBackdropColor(0,0,0,1)
 		guiFrame:SetPoint("CENTER")
 		guiFrame:SetWidth(400)
-		guiFrame:SetHeight(500)
+		guiFrame:SetHeight(540)
 		guiFrame:SetMovable(true)
 		guiFrame:EnableMouse(true)
 		guiFrame:RegisterForDrag("LeftButton")
@@ -843,19 +849,29 @@
 		input11Label:SetPoint("RIGHT", input11, "LEFT", -15, 0)
 		input11Label:SetText("Frame y pos")
 
-		--------------------------------------------------
-		-- separator 2
-		--------------------------------------------------
 
+		-- Disable duration text
+		local checkbox1 = CreateFrame("CheckButton", "PlateBufferCheckbox1", guiFrame, "UICheckButtonTemplate")
+		checkbox1:SetPoint("TOPLEFT", input10Label, "BOTTOMLEFT", -4, -6)
+		_G[checkbox1:GetName().."Text"]:SetText("Disable duration text")
+		checkbox1:SetScript("OnClick", function() PBCONF.activeprofile.disableDuration = this:GetChecked() or false end)
+
+		-- Disable cooldown texture
+		local checkbox2 = CreateFrame("CheckButton", "PlateBufferCheckbox2", guiFrame, "UICheckButtonTemplate")
+		checkbox2:SetPoint("TOPLEFT", input11Label, "BOTTOMLEFT", 25, -6)
+		_G[checkbox2:GetName().."Text"]:SetText("Disable cooldown texture")
+		checkbox2:SetScript("OnClick", function() PBCONF.activeprofile.disableCooldown = this:GetChecked() or false end)
+
+
+		-- separator 2
 		local lineSeparator2 = guiFrame:CreateTexture()
 		lineSeparator2:SetTexture(.4, .4, .4)
-		lineSeparator2:SetPoint("TOP", guiFrame, "TOP", 0, -190)
+		lineSeparator2:SetPoint("TOP", guiFrame, "TOP", 0, -220)
 		lineSeparator2:SetWidth(guiFrame:GetWidth()-36)
 		lineSeparator2:SetHeight(3)
 		
-		--------------------------------------------------
-		-- edit box and close button
-		--------------------------------------------------
+
+		-- edit box
 		local editBox = CreateFrame("Frame", "PlateBufferListEdit", guiFrame)
 		local editBoxInput = CreateFrame("EditBox", "PlateBufferListEditInput", editBox)
 		local editBoxScroll = CreateFrame("ScrollFrame", "PlateBufferListEditScroll", editBox, "UIPanelScrollFrameTemplate")

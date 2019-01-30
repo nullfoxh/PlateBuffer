@@ -44,7 +44,7 @@
 	local playerGUID, targetGUID, focusGUID, mouseGUID = UnitGUID("player")
 
 	local DRLib = LibStub("DRData-1.0")
-	local DRCache, AuraCache = {}, {}
+	local DRCache, AuraCache, conf = {}, {}
 	local SpellData = PBAD
 
 	local WATCHER_UPDATE_INTERVAL = 0.1
@@ -140,8 +140,8 @@
 	local function CreateAura(plate, i, aura, row)
 		if not plate.debuffs then plate.debuffs = {} end
 
-		local width, height = PBCONF.activeprofile.auraWidth, PBCONF.activeprofile.auraHeight
-		local perRow, spacing = PBCONF.activeprofile.aurasPerRow, PBCONF.activeprofile.auraSpacing*uiScale
+		local width, height = conf.auraWidth, conf.auraHeight
+		local perRow, spacing = conf.aurasPerRow, conf.auraSpacing*uiScale
 
 		local f = CreateFrame("Frame", nil, plate)
 		f:SetFrameStrata("BACKGROUND")
@@ -158,25 +158,33 @@
 		f.icon = f:CreateTexture(nil, "ARTWORK")
 		f.icon:SetAllPoints(f)
 
-		f.cd = CreateFrame("Cooldown", nil, f, "PlateBufferCD")
-		f.cd:SetAllPoints(f)
+		if not conf.disableCooldown then
+			f.cd = CreateFrame("Cooldown", nil, f, "PlateBufferCD")
+			f.cd:SetAllPoints(f)
+		else
+			f.cd = CreateFrame("Frame", nil, f)
+			f.cd:SetAllPoints(f)
+		end
 
 		f.count = f.cd:CreateFontString(nil, "OVERLAY")
-		f.count:SetFont(font,  PBCONF.activeprofile.fontSize * uiScale, "OUTLINE")
+		f.count:SetFont(font,  conf.fontSize * uiScale, "OUTLINE")
 		f.count:SetShadowColor(0, 0, 0)
 		f.count:SetShadowOffset(1, -1)
 		f.count:SetPoint("BOTTOMRIGHT", f.cd, "BOTTOMRIGHT", 1, 2)
 		f.count:SetJustifyH("RIGHT")
 
-		f.timer = f.cd:CreateFontString(nil, "OVERLAY")
-		f.timer:SetFont(font,  PBCONF.activeprofile.fontSize * uiScale, "OUTLINE")
-		f.timer:SetShadowColor(0, 0, 0)
-		f.timer:SetShadowOffset(1, -1)
-		f.timer:SetPoint("CENTER", f.cd, "CENTER", PBCONF.activeprofile.fontOffx, PBCONF.activeprofile.fontOffy)
-		f.timer:SetJustifyH("CENTER")
+		if not conf.disableDuration then
+			f.cd.noCooldownCount = true -- disable OmniCC
+			f.timer = f.cd:CreateFontString(nil, "OVERLAY")
+			f.timer:SetFont(font,  conf.fontSize * uiScale, "OUTLINE")
+			f.timer:SetShadowColor(0, 0, 0)
+			f.timer:SetShadowOffset(1, -1)
+			f.timer:SetPoint("CENTER", f.cd, "CENTER", conf.fontOffx, conf.fontOffy)
+			f.timer:SetJustifyH("CENTER")
+		end
 
 		if i == 1 then
-			f:SetPoint("BOTTOMLEFT", plate, "TOP", PBCONF.activeprofile.auraOffx-((width+spacing)*perRow-spacing)/2, PBCONF.activeprofile.auraOffy)
+			f:SetPoint("BOTTOMLEFT", plate, "TOP", conf.auraOffx-((width+spacing)*perRow-spacing)/2, conf.auraOffy)
 		elseif row > 1 then
 			f:SetPoint("BOTTOM", plate.debuffs[i-perRow], "TOP", 0, spacing)
 		else
@@ -215,8 +223,8 @@
 		end
 
 		local i = 1
-		for row = 1, PBCONF.activeprofile.auraRows do
-			for a = 1, PBCONF.activeprofile.aurasPerRow do
+		for row = 1, conf.auraRows do
+			for a = 1, conf.aurasPerRow do
 				local aura = auras[i]
 
 				if aura then
@@ -239,14 +247,17 @@
 					end
 
 					if aura.duration and aura.duration > 0 then
-						button.cd:SetCooldown(aura.startTime, aura.duration)
-						button.cd:SetReverse()
+						if not conf.disableCooldown then
+							button.cd:SetCooldown(aura.startTime, aura.duration)
+							button.cd:SetReverse()
+						end
 
-						button.expiration = aura.expiration
-						button.nextUpdate = 0
-
-						button.timer:Show()
-						button:SetScript("OnUpdate", UpdateTimer)
+						if not conf.disableDuration then
+							button.timer:Show()
+							button.expiration = aura.expiration
+							button.nextUpdate = 0
+							button:SetScript("OnUpdate", UpdateTimer)
+						end
 					end
 
 					PolledHideIn(button, aura.expiration)
@@ -348,13 +359,13 @@
 	end
 
 	function PB:IsTracked(name, isMine)
-		if not PBCONF.activeprofile.auraList[name] then
+		if not conf.auraList[name] then
 			return false
-		elseif PBCONF.activeprofile.auraList[name] == "mine" and not isMine then
+		elseif conf.auraList[name] == "mine" and not isMine then
 			return false
-		elseif PBCONF.activeprofile.auraList[name] == "mine" and isMine then	
+		elseif conf.auraList[name] == "mine" and isMine then	
 			return true
-		elseif PBCONF.activeprofile.auraList[name] == "all" then
+		elseif conf.auraList[name] == "all" then
 			return true
 		end
 		return false
@@ -585,6 +596,7 @@
 	end
 
 	function PB:UPDATE_MOUSEOVER_UNIT()
+		mouseGUID = nil
 		if UnitCanAttack("player", "mouseover") == 1 then
 			updateMouseOver = true
 		end
@@ -603,6 +615,13 @@
 		uiScale = tonumber(GetCVar("uiScale"))
 	end
 
+	function PB:ADDON_LOADED(addon)
+		if addon == "PlateBuffer" then
+			PB:UnregisterEvent("ADDON_LOADED")
+			conf = PBCONF.activeprofile
+		end
+	end
+
 	function PB:OnEvent(event, ...)
 		self[event](self, ...) 
 	end
@@ -614,6 +633,7 @@
 	PB:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 	PB:RegisterEvent("VARIABLES_LOADED")
 	PB:RegisterEvent("UI_SCALE_CHANGED")
+	PB:RegisterEvent("ADDON_LOADED")
 	PB:RegisterEvent("UNIT_AURA")
 
 	---------------------------------------------------------------------------------------------
@@ -652,7 +672,7 @@
 		end
 
 		if frame.debuffs then
-			for i = 1, PBCONF.activeprofile.auraRows*PBCONF.activeprofile.aurasPerRow do
+			for i = 1, conf.auraRows*conf.aurasPerRow do
 				if frame.debuffs[i] then
 					PolledHideIn(frame.debuffs[i], 0)
 				else
