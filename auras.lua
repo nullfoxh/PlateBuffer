@@ -2691,8 +2691,10 @@ PBAD.auraInfo = {
 	[30413] = "2;1", -- Shadowfury 2
 	[32922] = "10;1", -- Slow (mob ability)
 	[8629] = "4;0", -- Gouge 3
-	[13045] = "12;0", -- Enrage 2
-	[14202] = "12;0", -- Enrage 3
+	[13045] = "12;0", -- Enrage 2 (mob ability)
+	[14202] = "12;0", -- Enrage 3 (mob ability)
+	[37683] = "10;0", -- Evasion (mob ability)
+	[22896] = "10;0", -- Frenzied Regeneration 3
 
 	
 
@@ -2814,7 +2816,7 @@ PBAD.auraInfo = {
     [19253] = "120;4", -- Touch of Weakness 
     [17314] = "3;0", -- Mind Flay 
     [11672] = "18;1", -- Corruption 
-    [22895] = "10;0", -- Frenzied Regeneration 
+    [22895] = "10;0", -- Frenzied Regeneration 2
     [6783] = "0;0", -- Prowl 
     [20354] = "20;1", -- Judgement of Wisdom 
     [11428] = "2;0", -- Knockdown
