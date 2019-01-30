@@ -29,7 +29,7 @@ The TBC client's API is quite limited compared to later versions with both the C
 
 ## Known issues
 
-The cooldown texture will flicker when a nameplate moves. This seems to be unfixable without creating a custom texture. I will add an option to disable the texture soon.
+* The cooldown texture will flicker when a nameplate moves. You have the option to disable it in the config.
 
 ## To-do
 
