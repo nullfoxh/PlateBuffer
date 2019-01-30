@@ -12,6 +12,7 @@ PlateBuffer adds aura icons to enemy unit nameplates. You can choose which buffs
 
 Type /pb or /platebuffer in game to bring up the config menu. To track new spells click inside the editbox and press enter to make a new line, type in the name of the spell followed by '/mine' or '/all' depending whose auras you want to track. E.g: 'Curse of Agony/mine'. 
 For dots and other spells that can have multiple instances I recommend only tracking your own.
+**Click on 'Apply' after changing something!**
 
 ## How to install
 
