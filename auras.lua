@@ -2466,7 +2466,7 @@ PBAD.auraInfo = {
 	[25225] = "30;0", -- Sunder Armor 6
 	[25203] = "30;0", -- Demoralizing Shout 
 	[30197] = "3;0", -- Intercept Stun 3
-	[14204] = "12;0", -- Enrage
+	[14204] = "12;0", -- Enrage 5
 	[25264] = "30;0", -- Thunder Clap 7
 	[37529] = "10;0", -- Overpower 
 	[71] = "0;0", -- Defensive Stance
@@ -2689,6 +2689,10 @@ PBAD.auraInfo = {
 	[6798] = "3;0", -- Bash 2
 	[34259] = "4;1", -- Fear (mob ability)
 	[30413] = "2;1", -- Shadowfury 2
+	[32922] = "10;1", -- Slow (mob ability)
+	[8629] = "4;0", -- Gouge 3
+	[13045] = "12;0", -- Enrage 2
+	[14202] = "12;0", -- Enrage 3
 
 	
 
@@ -2722,7 +2726,7 @@ PBAD.auraInfo = {
 	[25367] = "18;1", -- Shadow Word: Pain
 	[19280] = "24;2", -- Devouring Plague
 	[9907] = "40;1", -- Faerie Fire 
-	[11286] = "4;0", -- Gouge 
+	[11286] = "4;0", -- Gouge 5
 	[34250] = "60;1", -- Whipped Fury 
 	[14315] = "20;0", -- Explosive Trap Effect 
 	[30404] = "18;1", -- Unstable Affliction 
@@ -2803,7 +2807,7 @@ PBAD.auraInfo = {
     [16561] = "21;1", -- Regrowth 
     [20308] = "30;1", -- Seal of the Crusader 
     [20919] = "30;1", -- Seal of Command
-    [11285] = "4;0", -- Gouge 
+    [11285] = "4;0", -- Gouge 4
     [6783] = "0;0", -- Prowl 
     [5708] = "2;0", -- Swoop 
     [9894] = "12;0", -- Rip 
