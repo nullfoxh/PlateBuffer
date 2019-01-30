@@ -2695,6 +2695,8 @@ PBAD.auraInfo = {
 	[14202] = "12;0", -- Enrage 3 (mob ability)
 	[37683] = "10;0", -- Evasion (mob ability)
 	[22896] = "10;0", -- Frenzied Regeneration 3
+	[33390] = "2;1", -- Arcane Torrent (mob ability)
+	[35429] = "10;0", -- Sweeping Strikes (mob ability)
 
 	
 
