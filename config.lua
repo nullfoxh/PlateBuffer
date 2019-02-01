@@ -315,8 +315,8 @@
 			_G["PlateBufferInput11"]:SetText(PBCONF.profiles[profile].auraOffy)
 
 			-- These will be nil on old installations, but should still work just fine.
-			_G["PlateBufferCheckbox1"]:SetChecked(PBCONF.activeprofile.disableDuration)
-			_G["PlateBufferCheckbox2"]:SetChecked(PBCONF.activeprofile.disableCooldown)
+			_G["PlateBufferCheckbox1"]:SetChecked(PBCONF.profiles[profile].disableDuration)
+			_G["PlateBufferCheckbox2"]:SetChecked(PBCONF.profiles[profile].disableCooldown)
 
 			local list = {}
 			for k,v in pairs(PBCONF.profiles[profile].auraList) do
