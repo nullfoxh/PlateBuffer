@@ -299,6 +299,45 @@
 		return profile
 	end
 
+	local function ApplySettings()
+
+		_G["PlateBufferListEditInput"]:ClearFocus()
+		_G["PlateBufferInput1"]:ClearFocus()
+		_G["PlateBufferInput3"]:ClearFocus()
+		_G["PlateBufferInput2"]:ClearFocus()
+		_G["PlateBufferInput4"]:ClearFocus()
+		_G["PlateBufferInput6"]:ClearFocus()
+		_G["PlateBufferInput7"]:ClearFocus()
+		_G["PlateBufferInput8"]:ClearFocus()
+		_G["PlateBufferInput9"]:ClearFocus()
+		_G["PlateBufferInput10"]:ClearFocus()
+		_G["PlateBufferInput11"]:ClearFocus()
+		
+		PBCONF.activeprofile.auraWidth = _G["PlateBufferInput1"]:GetText()
+		PBCONF.activeprofile.auraHeight = _G["PlateBufferInput3"]:GetText()
+		PBCONF.activeprofile.aurasPerRow =_G["PlateBufferInput2"]:GetText()
+		PBCONF.activeprofile.auraRows = _G["PlateBufferInput4"]:GetText()
+		PBCONF.activeprofile.auraSpacing = _G["PlateBufferInput6"]:GetText()
+		PBCONF.activeprofile.fontSize = _G["PlateBufferInput7"]:GetText()
+		PBCONF.activeprofile.fontOffx = _G["PlateBufferInput8"]:GetText()
+		PBCONF.activeprofile.fontOffy = _G["PlateBufferInput9"]:GetText()
+		PBCONF.activeprofile.auraOffx = _G["PlateBufferInput10"]:GetText()
+		PBCONF.activeprofile.auraOffy = _G["PlateBufferInput11"]:GetText()
+		PBCONF.activeprofile.disableDuration = _G["PlateBufferCheckbox1"]:GetChecked() or false
+		PBCONF.activeprofile.disableCooldown = _G["PlateBufferCheckbox2"]:GetChecked() or false
+
+		PBCONF.activeprofile.auraList = {}
+		for line in string.gmatch(editBoxInput:GetText(), "[^\r\n]+") do
+			local aura, show = strsplit("/", line)
+			if aura and show and (show == "mine" or show == "all") then
+				PBCONF.activeprofile.auraList[aura] = show
+			end
+		end
+
+		ReloadUI()
+
+	end
+
 	local function LoadProfile(profile)
 
 		if PBCONF.profiles[profile] then
@@ -610,7 +649,7 @@
 				value = 4
 				input1:SetText(value)
 			end
-			PBCONF.activeprofile.auraWidth = value
+			--PBCONF.activeprofile.auraWidth = value
 		end)
 
 		local input1Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -630,11 +669,11 @@
 			local value = tonumber(input2:GetText())
 			if not value or value < 1 then
 				value = 1
-				input2:SetText(value)
 			elseif value > 10 then
 				value = 10
 			end
-			PBCONF.activeprofile.aurasPerRow = value
+			input2:SetText(value)
+			--PBCONF.activeprofile.aurasPerRow = value
 		end)
 
 		local input2Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -657,7 +696,7 @@
 				value = 4
 				input3:SetText(value)
 			end
-			PBCONF.activeprofile.auraHeight = value
+			--PBCONF.activeprofile.auraHeight = value
 		end)
 
 		local input3Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -680,7 +719,7 @@
 				value = 1
 				input4:SetText(value)
 			end
-			PBCONF.activeprofile.auraRows = value
+			--PBCONF.activeprofile.auraRows = value
 		end)
 
 		local input4Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -689,6 +728,7 @@
 
 
 		-- disabled
+		--[[
 		local input5 = CreateFrame("EditBox", "PlateBufferInput5", guiFrame, "InputBoxTemplate")
 		input5:SetWidth(32)
 		input5:SetHeight(12)
@@ -703,7 +743,7 @@
 				value = 1
 				input5:SetText(value)
 			end
-			PBCONF.activeprofile.auraSpacing = value
+			--PBCONF.activeprofile.auraSpacing = value
 		end)
 
 		local input5Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -711,7 +751,8 @@
 		input5Label:SetText("Spacing")
 		-- Disabled for now
 		input5Label:Hide()
-		input5:Hide() 
+		input5:Hide()
+		]]
 
 
 		-- Spacing
@@ -729,7 +770,7 @@
 				value = 1
 				input6:SetText(value)
 			end
-			PBCONF.activeprofile.auraSpacing = value
+			--PBCONF.activeprofile.auraSpacing = value
 		end)
 
 		local input6Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -751,7 +792,7 @@
 			if not value or value < 4 then
 				input7:SetText(4)
 			end
-			PBCONF.activeprofile.fontSize = value
+			--PBCONF.activeprofile.fontSize = value
 		end)
 
 		local input7Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -774,12 +815,13 @@
 				value = 1
 				input8:SetText(value)
 			end
-			PBCONF.activeprofile.fontOffx = value
+			--PBCONF.activeprofile.fontOffx = value
 		end)
 
 		local input8Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		input8Label:SetPoint("RIGHT", input8, "LEFT", -15, 0)
 		input8Label:SetText("Font x pos")
+
 
 		-- Font Offset y
 		local input9 = CreateFrame("EditBox", "PlateBufferInput9", guiFrame, "InputBoxTemplate")
@@ -796,7 +838,7 @@
 				value = 1
 				input9:SetText(value)
 			end
-			PBCONF.activeprofile.fontOffy = value
+			--PBCONF.activeprofile.fontOffy = value
 		end)
 
 		local input9Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -819,7 +861,7 @@
 				value = 1
 				input10:SetText(value)
 			end
-			PBCONF.activeprofile.auraOffy = value
+			--PBCONF.activeprofile.auraOffy = value
 		end)
 
 		local input10Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -842,7 +884,7 @@
 				value = 1
 				input11:SetText(value)
 			end
-			PBCONF.activeprofile.auraOffy = value
+			--PBCONF.activeprofile.auraOffy = value
 		end)
 
 		local input11Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -854,13 +896,13 @@
 		local checkbox1 = CreateFrame("CheckButton", "PlateBufferCheckbox1", guiFrame, "UICheckButtonTemplate")
 		checkbox1:SetPoint("TOPLEFT", input10Label, "BOTTOMLEFT", -4, -6)
 		_G[checkbox1:GetName().."Text"]:SetText("Disable duration text")
-		checkbox1:SetScript("OnClick", function() PBCONF.activeprofile.disableDuration = this:GetChecked() or false end)
+		--checkbox1:SetScript("OnClick", function() PBCONF.activeprofile.disableDuration = this:GetChecked() or false end)
 
 		-- Disable cooldown texture
 		local checkbox2 = CreateFrame("CheckButton", "PlateBufferCheckbox2", guiFrame, "UICheckButtonTemplate")
 		checkbox2:SetPoint("TOPLEFT", input11Label, "BOTTOMLEFT", 25, -6)
 		_G[checkbox2:GetName().."Text"]:SetText("Disable cooldown texture")
-		checkbox2:SetScript("OnClick", function() PBCONF.activeprofile.disableCooldown = this:GetChecked() or false end)
+		--checkbox2:SetScript("OnClick", function() PBCONF.activeprofile.disableCooldown = this:GetChecked() or false end)
 
 
 		-- separator 2
@@ -890,20 +932,7 @@
 		buttonApply:SetHeight(26)
 		buttonApply:SetPoint("TOPRIGHT", lineSeparator1, "TOPRIGHT", -2, -6)
 		_G[buttonApply:GetName().."Text"]:SetText("Apply")
-		buttonApply:SetScript("OnClick", function()
-			editBoxInput:ClearFocus()
-			PlateBufferInput1:ClearFocus()
-			PlateBufferInput3:ClearFocus()
-			PlateBufferInput2:ClearFocus()
-			PlateBufferInput4:ClearFocus()
-			PlateBufferInput6:ClearFocus()
-			PlateBufferInput7:ClearFocus()
-			PlateBufferInput8:ClearFocus()
-			PlateBufferInput9:ClearFocus()
-			PlateBufferInput10:ClearFocus()
-			PlateBufferInput11:ClearFocus()
-			ReloadUI()
-		end)
+		buttonApply:SetScript("OnClick", ApplySettings)
 
 		-- editBox - main container
 		editBox:SetPoint("TOP", lineSeparator2, "BOTTOM", -10, -6)
@@ -924,19 +953,7 @@
 		editBoxInput:SetAutoFocus(false)
 		editBoxInput:EnableMouse(true)
 		editBoxInput:SetFont("Fonts/ARIALN.ttf", 13)
-		
 		editBoxInput:SetScript("OnEscapePressed", function() editBoxInput:ClearFocus() end)
-		editBoxInput:SetScript("OnEditFocusLost", function()
-
-			PBCONF.activeprofile.auraList = {}
-			for line in string.gmatch(editBoxInput:GetText(), "[^\r\n]+") do
-
-				local aura, show = strsplit("/", line)
-				if aura and show and (show == "mine" or show == "all") then
-					PBCONF.activeprofile.auraList[aura] = show
-				end
-			end
-		end)
 
 		-- editBoxScroll
 		editBoxScroll:SetPoint("TOPLEFT", editBox, "TOPLEFT", 9, -4)
