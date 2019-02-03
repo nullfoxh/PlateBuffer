@@ -103,7 +103,7 @@
 			["Hemorrhage"] = "mine",
 
 			-- Warlock
-			["Deathcoil"] = "all",
+			["Death Coil"] = "all",
 			["Fear"] = "all",
 			["Howl of Terror"] = "all",
 			["Shadowfury"] = "all",

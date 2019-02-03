@@ -2700,6 +2700,7 @@ PBAD.auraInfo = {
 	[13585] = "600;1", -- Lightning Shield (mob ability)
 	[22127] = "10;1", -- Entangling Roots (mob ability)
 	[25252] = "8;0", -- Bloodthirst 
+	[21401] = "8;1", -- Frost Shock (mob ability)
 	
 
 

@@ -10,7 +10,7 @@
 	]]--
 
 
-	local debug = true
+	local debug = false
 
 	local DR_RESET_TIME = 18
 
