@@ -117,6 +117,7 @@
 			["Curse of Weakness"] = "mine",
 			["Curse of Recklessness"] = "mine",
 			["Curse of Elements"] = "all",
+			["Curse of Tongues"] = "all",
 			["Curse of Doom"] = "mine",
 			["Siphon Life"] = "mine",
 			["Seed of Corruption"] = "mine",
@@ -194,7 +195,7 @@
 			["Battle Shout"] = "mine",
 			["Commanding Shout"] = "mine",
 			["Bloodrage"] = "all",
-			["Bloodthirst"] = "all",
+			--["Bloodthirst"] = "all",
 			["Blood Craze"] = "all",
 			["Death Wish"] = "all",
 			["Enrage"] = "all",
@@ -327,7 +328,7 @@
 		PBCONF.activeprofile.disableCooldown = _G["PlateBufferCheckbox2"]:GetChecked() or false
 
 		PBCONF.activeprofile.auraList = {}
-		for line in string.gmatch(editBoxInput:GetText(), "[^\r\n]+") do
+		for line in string.gmatch(_G["PlateBufferListEditInput"]:GetText(), "[^\r\n]+") do
 			local aura, show = strsplit("/", line)
 			if aura and show and (show == "mine" or show == "all") then
 				PBCONF.activeprofile.auraList[aura] = show
