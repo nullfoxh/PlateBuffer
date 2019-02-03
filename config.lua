@@ -116,7 +116,7 @@
 			["Unstable Affliction"] = "mine",
 			["Curse of Weakness"] = "mine",
 			["Curse of Recklessness"] = "mine",
-			["Curse of Elements"] = "all",
+			["Curse of the Elements"] = "all",
 			["Curse of Tongues"] = "all",
 			["Curse of Doom"] = "mine",
 			["Siphon Life"] = "mine",
@@ -729,7 +729,6 @@
 
 
 		-- disabled
-		--[[
 		local input5 = CreateFrame("EditBox", "PlateBufferInput5", guiFrame, "InputBoxTemplate")
 		input5:SetWidth(32)
 		input5:SetHeight(12)
@@ -753,7 +752,6 @@
 		-- Disabled for now
 		input5Label:Hide()
 		input5:Hide()
-		]]
 
 
 		-- Spacing
