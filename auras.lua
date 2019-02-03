@@ -2697,7 +2697,9 @@ PBAD.auraInfo = {
 	[22896] = "10;0", -- Frenzied Regeneration 3
 	[33390] = "2;1", -- Arcane Torrent (mob ability)
 	[35429] = "10;0", -- Sweeping Strikes (mob ability)
-
+	[13585] = "600;1", -- Lightning Shield (mob ability)
+	[22127] = "10;1", -- Entangling Roots (mob ability)
+	[25252] = "8;0", -- Bloodthirst 
 	
 
 
