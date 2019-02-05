@@ -2701,6 +2701,10 @@ PBAD.auraInfo = {
 	[22127] = "10;1", -- Entangling Roots (mob ability)
 	[25252] = "8;0", -- Bloodthirst 
 	[21401] = "8;1", -- Frost Shock (mob ability)
+	[15044] = "60;1", -- Frost Ward (mob ability)
+	[29841] = "10;0", -- Second Wind 1 
+	[19249] = "120;4", -- Touch of Weakness
+
 	
 
 
