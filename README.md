@@ -1,7 +1,5 @@
 # PlateBuffer
 
-### Please note that this is a BETA release and it might at times print a message to your chat if it's lacking data for a spell. Please report these to me here or on Discord: null#0010 so that I can add the spells to the database!
-
 ![Screenshot](PlateBuffer.png)
 
 ## What does it do
