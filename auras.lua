@@ -2704,6 +2704,11 @@ PBAD.auraInfo = {
 	[15044] = "60;1", -- Frost Ward (mob ability)
 	[29841] = "10;0", -- Second Wind 1 
 	[19249] = "120;4", -- Touch of Weakness
+	[37844] = "30;1", -- Fire Ward (mob ability)
+	[37599] = "15;1", -- Bloodlust (mob ability)
+	[17139] = "30;1", -- Power Word: Shield (mob ability)
+	[36096] = "8;1", -- Spell Reflection (mob ability)
+	[12674] = "8;1", -- Frost Nova (mob ability)
 
 	
 
