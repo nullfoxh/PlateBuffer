@@ -2709,6 +2709,12 @@ PBAD.auraInfo = {
 	[17139] = "30;1", -- Power Word: Shield (mob ability)
 	[36096] = "8;1", -- Spell Reflection (mob ability)
 	[12674] = "8;1", -- Frost Nova (mob ability)
+	[36843] = "10;1", -- Slow (mob ability)
+	[33245] = "30;1", -- Ice Barrier (mob ability)
+	[17740] = "60;1", -- Mana Shield (mob ability)
+	[27641] = "6;1", -- Fear (mob ability)
+	[37985] = "3;0", -- Fire Breath (mob/pet ability)
+	[31534] = "8;0", -- Spell Reflection (mob ability)
 
 	
 
