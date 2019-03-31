@@ -480,12 +480,12 @@
 		end
 	end
 
-	function PB:OnAuraRemoved(dstGUID, dstName, spellName, spellID)
+	function PB:OnAuraRemoved(dstGUID, dstName, spellName, spellID, noUpdate)
 		local isPlayer = IsPlayer(dstGUID)
 
 		PB:ApplyDR(dstGUID, spellID, isPlayer)
 
-		if PB:RemoveAuraInstance(dstGUID, spellName) then
+		if PB:RemoveAuraInstance(dstGUID, spellName) and not noUpdate then
 			PB:UpdatePlate(dstGUID, isPlayer and dstName or nil)
 		end
 	end
@@ -518,7 +518,7 @@
 			PB:OnAuraApplied(srcGUID, dstGUID, dstName, spellID, spellName, auraType, stackCount)
 
 		elseif eventType == "SPELL_AURA_REFRESH" then
-			PB:OnAuraRemoved(dstGUID, dstName, spellName, spellID)
+			PB:OnAuraRemoved(dstGUID, dstName, spellName, spellID, true)
 			PB:OnAuraApplied(srcGUID, dstGUID, dstName, spellID, spellName, auraType, stackCount)
 
 		elseif eventType == "SPELL_AURA_REMOVED" or eventType == "SPELL_AURA_DISPEL" or eventType == "SPELL_AURA_STOLEN" then
