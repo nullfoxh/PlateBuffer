@@ -2718,6 +2718,7 @@ PBAD.auraInfo = {
 	[34970] = "120;0", -- Enrage (mob ability)
 	[38154] = "6;1", -- Fear (mob ability)
 	[28902] = "10;1", -- Bloodlust (mob ability)
+	[38599] = "8;0", -- Spell Reflection (mob ability)
 	
 
 	
