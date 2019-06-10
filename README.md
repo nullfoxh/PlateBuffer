@@ -18,7 +18,7 @@ Since this is a beta release, you will have to clone/download this repo, rename 
 
 ## How does it work
 
-To display auras on a nameplate we need to identify the nameplate first. This is done by targeting a unit, mouseovering a nameplate, by unit name (only for players) or raid target markers. If a unit walks offscreen or you turn the camera so that the nameplate is hidden, it needs to be identified again before auras can be shown!
+To display auras on a nameplate we need to identify the nameplate first. This is done by targeting a unit, mouseovering a nameplate or by unit name (only for players). If a unit walks offscreen or you turn the camera so that the nameplate is hidden, it needs to be identified again before auras can be shown!
 
 Spell durations and DRs are tracked by listening to the UNIT_AURA event as well as combat log events. A database of spell durations and debufftypes is utilized for this.
 
@@ -28,11 +28,7 @@ The TBC client's API is quite limited compared to later versions with both the C
 
 ## Known issues
 
-* The cooldown texture will flicker when a nameplate moves. You have the option to disable it in the config.
-
-## To-do
-
-* Identifying units by raid marker
+* The cooldown texture will flicker when a nameplate moves. You have the option to disable the texture completely.
 
 ## Credits and acknowledgements
 
