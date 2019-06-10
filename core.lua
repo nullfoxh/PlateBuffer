@@ -24,11 +24,11 @@
 	local pairs, select, unpack, strsub, strsplit, tonumber, bit_band, table_sort, table_insert
 		= pairs, select, unpack, strsub, strsplit, tonumber, bit.band, table.sort, table.insert
 
-	local UnitGUID, UnitBuff, UnitDebuff, UnitExists, UnitCanAttack, UnitName, UnitIsPlayer
-		= UnitGUID, UnitBuff, UnitDebuff, UnitExists, UnitCanAttack, UnitName, UnitIsPlayer
+	local UnitGUID, UnitBuff, UnitDebuff, UnitCanAttack, UnitName, UnitIsPlayer, UnitLevel
+		= UnitGUID, UnitBuff, UnitDebuff, UnitCanAttack, UnitName, UnitIsPlayer, UnitLevel
 
-	local tostring, GetTime, GetSpellInfo, DebuffTypeColor, IsInInstance, UnitIsPlayer, UnitLevel
-		= tostring, GetTime, GetSpellInfo, DebuffTypeColor, IsInInstance, UnitIsPlayer, UnitLevel
+	local tostring, GetTime, GetSpellInfo, DebuffTypeColor, IsInInstance, UnitIsDeadOrGhost
+		= tostring, GetTime, GetSpellInfo, DebuffTypeColor, IsInInstance, UnitIsDeadOrGhost
 
 	local print = function(s) DEFAULT_CHAT_FRAME:AddMessage("|cffa0f6aaPlateBuffer|r: "..s) end
 	print("Loaded. Get updates from https://github.com/nullfoxh/PlateBuffer")
@@ -37,21 +37,26 @@
 
 	local PB = CreateFrame("Frame")
 	local newChildren, numChildren = 0, 0
-	local hasTarget, targetPlate = false, nil
+	local hasTarget, hasMouseover, targetPlate = false, false, nil
 	local updateTarget, updateMouseOver = false, false
 	local visiblePlates, knownPlates, knownPlayers = {}, {}, {}
-	local uiScale = 0.7111
 	local playerGUID, targetGUID, focusGUID, mouseGUID = UnitGUID("player")
+	local NOUPDATE = true -- for readability only, do not change
+	local uiScale = 0.7111
 
 	local DRLib = LibStub("DRData-1.0")
 	local DRCache, AuraCache, conf = {}, {}
 	local SpellData = PBAD
 
-	local WATCHER_UPDATE_INTERVAL = 0.1
+	local ForceMouseoverUpdate = true
+	local MouseoverUpdateInterval = 0.1
+	local MouseoverUpdateNext = 0
+
 	local Watcher = CreateFrame("Frame")
+	local WatcherUpdateInterval = 0.1
+	local WatcherThrottle = 0
 	local WatchedFrames = {}
 	local WatcherActive = false
-	local WatcherThrottle = 0
 
 	---------------------------------------------------------------------------------------------
 
@@ -63,7 +68,7 @@
 		WatcherThrottle = WatcherThrottle - elapsed
 
 		if WatcherThrottle < 0 then
-			WatcherThrottle = WATCHER_UPDATE_INTERVAL
+			WatcherThrottle = WatcherUpdateInterval
 
 			local time = GetTime()
 			local framecount = 0
@@ -444,6 +449,7 @@
 	end
 
 	function PB:OnAuraApplied(srcGUID, dstGUID, dstName, spellID, spellName, auraType, stackCount)
+
 		local isPlayer = IsPlayer(dstGUID)
 
 		local dr = 1
@@ -518,7 +524,7 @@
 			PB:OnAuraApplied(srcGUID, dstGUID, dstName, spellID, spellName, auraType, stackCount)
 
 		elseif eventType == "SPELL_AURA_REFRESH" then
-			PB:OnAuraRemoved(dstGUID, dstName, spellName, spellID, true)
+			PB:OnAuraRemoved(dstGUID, dstName, spellName, spellID, NOUPDATE)
 			PB:OnAuraApplied(srcGUID, dstGUID, dstName, spellID, spellName, auraType, stackCount)
 
 		elseif eventType == "SPELL_AURA_REMOVED" or eventType == "SPELL_AURA_DISPEL" or eventType == "SPELL_AURA_STOLEN" then
@@ -539,6 +545,11 @@
 
 	---------------------------------------------------------------------------------------------
 
+	local function round(num, numDecimalPlaces)
+		local mult = 10^(numDecimalPlaces or 0)
+		return floor(num * mult + 0.5) / mult
+	end
+
 	function PB:UNIT_AURA(unit, noUpdate)
 		if unit ~= "target" and unit ~= "focus" and unit ~= "mouseover" then
 			return
@@ -550,6 +561,7 @@
 
 		local needUpdate = false
 		local guid = UnitGUID(unit)
+		local time = GetTime()
 
 		for i = 1, 40 do
 			local name, rank, icon, count, dtype, duration, timeLeft, isMine = UnitDebuff(unit, i)
@@ -557,8 +569,12 @@
 
 			if isMine or (isMine == nil and duration and duration > 0) then
 				if PB:IsTracked(name, true) then
-					PB:SetAuraInstance(guid, name, nil, icon, count, dtype, duration, timeLeft, true)
-					needUpdate = true
+					-- Check if we have an existing instance of this aura, ignore if we do. Needed due to forced UNIT_AURA updates on mouseover.
+					local _, _, _, acount, _, _, _, _, expiration = PB:GetAuraInstance(guid, name)
+					if not expiration or count ~= acount or round(expiration, 1) ~= round(time+timeLeft, 1) then
+						PB:SetAuraInstance(guid, name, nil, icon, count, dtype, duration, timeLeft, true)
+						needUpdate = true
+					end
 				end
 			end
 		end
@@ -569,8 +585,12 @@
 
 			if isMine or (isMine == nil and duration and duration > 0) then
 				if PB:IsTracked(name, true) then
-					PB:SetAuraInstance(guid, name, nil, icon, count, "BUFF", duration, timeLeft, true)
-					needUpdate = true
+					-- Check if we have an existing instance of this aura, ignore if we do. Needed due to forced UNIT_AURA updates on mouseover.
+					local _, _, _, acount, _, _, _, _, expiration = PB:GetAuraInstance(guid, name)
+					if not expiration or count ~= acount or round(expiration, 1) ~= round(time+timeLeft, 1) then
+						PB:SetAuraInstance(guid, name, nil, icon, count, "BUFF", duration, timeLeft, true)
+						needUpdate = true
+					end
 				end
 			end
 		end
@@ -586,18 +606,24 @@
 
 	---------------------------------------------------------------------------------------------
 
+	local function IsValidTarget(unit)
+		return UnitCanAttack("player", unit) == 1 and not UnitIsDeadOrGhost(unit)
+	end
+
 	function PB:PLAYER_TARGET_CHANGED()
 		targetPlate = nil
 		targetGUID = nil
-		hasTarget = UnitCanAttack("player", "target") == 1
+		hasTarget = IsValidTarget("target")
 		if hasTarget then
 			updateTarget = true
 		end
 	end
 
 	function PB:UPDATE_MOUSEOVER_UNIT()
+		--print("PB:UPDATE_MOUSEOVER_UNIT()")
 		mouseGUID = nil
-		if UnitCanAttack("player", "mouseover") == 1 then
+		hasMouseover = IsValidTarget("mouseover")
+		if hasMouseover then
 			updateMouseOver = true
 		end
 	end
@@ -726,13 +752,28 @@
 		end
 	end
 
-	function PB:OnUpdate()
+	function PB:OnUpdate(elapsed)
+
 		if updateTarget then 
 			PB:UpdateTargetPlate()
 		end
 		
 		if updateMouseOver then 
 			PB:UpdateMouseOverPlate() 
+		end
+
+		if ForceMouseoverUpdate and hasMouseover then
+			MouseoverUpdateNext = MouseoverUpdateNext + elapsed
+
+			if MouseoverUpdateNext > MouseoverUpdateInterval then
+				MouseoverUpdateNext = 0
+
+				if IsValidTarget("mouseover") then
+					PB:UNIT_AURA("mouseover")
+				else
+					hasMouseover = false
+				end
+			end
 		end
 
 		newChildren = WorldFrame:GetNumChildren()
@@ -802,13 +843,13 @@
 
 	function PB:UpdateTargetPlate()
 		updateTarget = false
-		if UnitCanAttack("player", "target") == 1 then
+		if IsValidTarget("target") then
 			targetGUID = UnitGUID("target")
 
 			local plate = PB:GetTargetPlate()
 			if plate then
 				targetPlate = plate
-				PB:UNIT_AURA("target", true)
+				PB:UNIT_AURA("target", NOUPDATE)
 				PB:OnPlateIdentified(plate, targetGUID, true)
 			end
 		end
@@ -816,7 +857,7 @@
 
 	function PB:UpdateMouseOverPlate()
 		updateMouseOver = false
-		if UnitCanAttack("player", "mouseover") == 1 then
+		if IsValidTarget("mouseover") then
 			mouseGUID = UnitGUID("mouseover")
 
 			local plate
@@ -825,6 +866,7 @@
 				return 
 			elseif knownPlates[mouseGUID] then
 				PB:UNIT_AURA("mouseover")
+				return
 			elseif UnitIsPlayer("mouseover") then
 				plate = PB:GetPlateByName(UnitName("mouseover"))
 			else
@@ -832,7 +874,7 @@
 			end
 
 			if plate then
-				PB:UNIT_AURA("mouseover", true)
+				PB:UNIT_AURA("mouseover", NOUPDATE)
 				PB:OnPlateIdentified(plate, mouseGUID)
 			end
 		end
