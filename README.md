@@ -4,12 +4,12 @@
 
 ## What does it do
 
-PlateBuffer adds aura icons to enemy unit nameplates. You can choose which buffs and debuffs you want to see. It will track auras that have a duration. The addon does not change your nameplates, only adds buffs to them so it works with the default nameplates, Aloft, ElvUI and others.
+PlateBuffer adds aura icons to enemy unit nameplates. You can choose which auras you want to see. It will track auras that have a duration. The addon does not change your nameplates, only adds aura icons to them so it works with the default nameplates, Aloft, ElvUI and others.
 
 ## How to configure
 
-Type `/pb` or `/platebuffer` in game to bring up the config menu. To track new spells click inside the editbox and press enter to make a new line, type in the name of the spell followed by '/mine' or '/all' depending whose auras you want to track. E.g: `Curse of Agony/mine`  
-For dots and other spells that can have multiple instances I recommend only tracking your own.  
+Type `/pb` or `/platebuffer` in game to bring up the config menu. To track new auras click inside the editbox and press enter to make a new line, type in the name of the aura followed by '/mine' or '/all' depending whose auras you want to track. E.g: `Curse of Agony/mine`  
+For dots and other auras that can have multiple instances I recommend only tracking your own.  
 **Click on 'Apply' after changing something!**
 
 ## How to install
@@ -24,11 +24,11 @@ Spell durations and DRs are tracked by listening to the UNIT_AURA event as well 
 
 ## Technical limitations
 
-The TBC client's API is quite limited compared to later versions with both the Combatlog and UnitBuff missing a lot of data. This means we can only track one instance of each spell and we need to rely on a database for durations outside of our own auras. We also can not account for talented durations.
+The TBC client's API is quite limited compared to later versions with both the Combatlog and UnitBuff missing a lot of data. This means we can only track one instance of each aura and we need to rely on a database for durations outside of our own auras. We also can not account for talented durations.
 
 ## Known issues
 
-* The cooldown texture will flicker when a nameplate moves. You have the option to disable the texture completely.
+* The cooldown texture will flicker when a nameplate moves. You have the option to disable the texture.
 
 ## Credits and acknowledgements
 
