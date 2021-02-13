@@ -2658,7 +2658,6 @@ PBAD.auraInfo = {
 	[10193] = "60;1", -- Mana Shield 6
 	[39419] = "10;3", -- Poison Spit 
 	[32064] = "120;0", -- Battle Shout 
-
 	[34827] = "600;1", -- Water Shield 
 	[15062] = "10;0", -- Shield Wall 
 	[30195] = "3;0", -- Intercept Stun 2
@@ -2719,10 +2718,18 @@ PBAD.auraInfo = {
 	[38154] = "6;1", -- Fear (mob ability)
 	[28902] = "10;1", -- Bloodlust (mob ability)
 	[38599] = "8;0", -- Spell Reflection (mob ability)
-	
-
-	
-
+	[1714] = "30;4", -- Curse of Tongues
+	[13005] = "6;1", -- Hammer of Justice
+	[19254] = "120;4", -- Touch of Weakness 6
+	[34828] = "8;1", -- Water Shield
+	[7020] = "15;1", -- Stoneform
+	[19251] = "120;4", -- Touch of Weakness 3
+	[7093] = "3;1", -- Intimidation
+	[19514] = "600;1", -- Lightning Shield
+	[22884] = "4;1", -- Psychic Scream (mob ability)
+	[38541] = "10;0", -- Evasion
+	[34889] = "2;0", -- Fire Breath
+	[1022] = "6;1", -- Blessing of Protection 
 
 	-- Most of these reported by Elyne, again much love!
 	[33667] = "15;0", -- Ferocity 
@@ -2792,7 +2799,6 @@ PBAD.auraInfo = {
 	[11286] = "4;0", -- Gouge 
 	[17926] = "3;1", -- Death Coil 
 	[26201] = "0;0", -- Charge (Boar) (AP increase, lets put duration 0 so we dont see it)
-
 
 	-- Big thanks to Elyne from Netherwing discord for filling in these <3
 	[21970] = "60;1", -- Mark of the Chosen Effect 
