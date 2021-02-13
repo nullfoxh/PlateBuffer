@@ -1,6 +1,7 @@
 # PlateBuffer
 
 ![Screenshot](PlateBuffer.png)
+![Screenshot](pbconf.png)
 
 ## What does it do
 
@@ -14,13 +15,13 @@ For dots and other auras that can have multiple instances I recommend only track
 
 ## How to install
 
-Since this is a beta release, you will have to clone/download this repo, rename the folder to PlateBuffer and place it in your AddOns folder.
+Go to Releases in https://github.com/nullfoxh/PlateBuffer/releases and download PlateBuffer.zip. Extract it to your World of Warcraft/Interface/AddOns folder and you're done! The path should be: World of Warcraft/Interface/AddOns/PlateBuffer/PlateBuffer.toc.
 
 ## How does it work
 
 To display auras on a nameplate we need to identify the nameplate first. This is done by targeting a unit, mouseovering a nameplate or by unit name (only for players). If a unit walks offscreen or you turn the camera so that the nameplate is hidden, it needs to be identified again before auras can be shown!
 
-Spell durations and DRs are tracked by listening to the UNIT_AURA event as well as combat log events. A database of spell durations and debufftypes is utilized for this.
+Spell durations and DRs are tracked by listening to the UNIT_AURA event as well as combat log events. A database of spell durations and debuff types is utilized for this.
 
 ## Technical limitations
 
