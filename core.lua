@@ -10,7 +10,7 @@
 	]]--
 
 
-	local debug = false
+	local DEBUG = false
 
 	local DR_RESET_TIME = 18
 
@@ -21,27 +21,28 @@
 
 	local ceil, floor, upper, format = math.ceil, math.floor, string.upper, string.format
 
-	local pairs, select, unpack, strsub, strsplit, tonumber, bit_band, table_sort, table_insert
-		= pairs, select, unpack, strsub, strsplit, tonumber, bit.band, table.sort, table.insert
-
 	local UnitGUID, UnitBuff, UnitDebuff, UnitCanAttack, UnitName, UnitIsPlayer, UnitLevel
 		= UnitGUID, UnitBuff, UnitDebuff, UnitCanAttack, UnitName, UnitIsPlayer, UnitLevel
 
 	local tostring, GetTime, GetSpellInfo, DebuffTypeColor, IsInInstance, UnitIsDeadOrGhost
 		= tostring, GetTime, GetSpellInfo, DebuffTypeColor, IsInInstance, UnitIsDeadOrGhost
 
-	local print = function(s) DEFAULT_CHAT_FRAME:AddMessage("|cffa0f6aaPlateBuffer|r: "..s) end
+	local pairs, select, unpack, strsub, strsplit, tonumber, bit_band, table_sort, table_insert
+		= pairs, select, unpack, strsub, strsplit, tonumber, bit.band, table.sort, table.insert
+
+	local addonName = "PlateBuffer"
+	local print = function(msg) DEFAULT_CHAT_FRAME:AddMessage(format("|cffa0f6aa%s:|r ", addonName)..msg) end
+	local printf = function(...) print(format(...)) end
 	print("Loaded. Get updates from https://github.com/nullfoxh/PlateBuffer")
 
 	---------------------------------------------------------------------------------------------
 
 	local PB = CreateFrame("Frame")
 	local newChildren, numChildren = 0, 0
-	local hasTarget, hasMouseover, targetPlate = false, false, nil
 	local updateTarget, updateMouseOver = false, false
+	local hasTarget, hasMouseover, targetPlate = false, false, nil
 	local visiblePlates, knownPlates, knownPlayers = {}, {}, {}
 	local playerGUID, targetGUID, focusGUID, mouseGUID = UnitGUID("player")
-	local NOUPDATE = true -- for readability only, do not change
 	local uiScale = 0.7111
 
 	local DRLib = LibStub("DRData-1.0")
@@ -82,9 +83,9 @@
 				end
 			end
 
-			if framecount == 0 then 
+			if framecount == 0 then
 				Watcher:SetScript("OnUpdate", nil)
-				WatcherActive = false 
+				WatcherActive = false
 			end
 		end
 	end
@@ -147,13 +148,14 @@
 
 		local width, height = conf.auraWidth, conf.auraHeight
 		local perRow, spacing = conf.aurasPerRow, conf.auraSpacing*uiScale
+		local borderSize = conf.borderSize and conf.borderSize*uiScale or 1
 
 		local f = CreateFrame("Frame", nil, plate)
 		f:SetFrameStrata("BACKGROUND")
 
 		f.bg = f:CreateTexture(nil, "BACKGROUND")
-		f.bg:SetPoint("TOPLEFT", f, -uiScale, uiScale)
-		f.bg:SetPoint("BOTTOMRIGHT", f, uiScale, -uiScale)
+		f.bg:SetPoint("TOPLEFT", f, -borderSize, borderSize)
+		f.bg:SetPoint("BOTTOMRIGHT", f, borderSize, -borderSize)
 		f.bg:SetTexture("Interface\\ChatFrame\\ChatFrameBackground")
 		f.bg:SetVertexColor(0, 0, 0)
 
@@ -209,7 +211,7 @@
 	function PB:UpdatePlate(guid, name)
 		local plate = knownPlates[guid]
 
-		if plate then 
+		if plate then
 			PB:UpdatePlateAuras(plate, guid)
 		elseif name then
 			plate = PB:GetPlateByName(name)
@@ -233,7 +235,7 @@
 				local aura = auras[i]
 
 				if aura then
-					local button	
+					local button
 					if plate.debuffs and plate.debuffs[i] then
 						button = plate.debuffs[i]
 					else
@@ -266,7 +268,6 @@
 					end
 
 					PolledHideIn(button, aura.expiration)
-
 				elseif plate.debuffs and plate.debuffs[i] then
 					PolledHideIn(plate.debuffs[i], 0)
 				end
@@ -295,7 +296,7 @@
 	end
 
 	function PB:GetUnitAuras(guid)
-		if AuraCache[guid] then 
+		if AuraCache[guid] then
 			local auras = {}
 			local time = GetTime()
 
@@ -311,6 +312,7 @@
 					PB:RemoveAuraInstance(guid, k)
 				end
 			end
+			
 			table_sort(auras, AuraSort)
 			return auras
 		end
@@ -368,13 +370,13 @@
 			return false
 		elseif conf.auraList[name] == "mine" and not isMine then
 			return false
-		elseif conf.auraList[name] == "mine" and isMine then	
+		elseif conf.auraList[name] == "mine" and isMine then
 			return true
 		elseif conf.auraList[name] == "all" then
 			return true
 		end
 		return false
-	end		
+	end
 
 	---------------------------------------------------------------------------------------------
 
@@ -449,7 +451,6 @@
 	end
 
 	function PB:OnAuraApplied(srcGUID, dstGUID, dstName, spellID, spellName, auraType, stackCount)
-
 		local isPlayer = IsPlayer(dstGUID)
 
 		local dr = 1
@@ -457,8 +458,8 @@
 			dr = PB:InitDR(dstGUID, spellID, isPlayer)
 		end
 
-		if isPlayer then 
-			knownPlayers[dstName] = dstGUID 
+		if isPlayer then
+			knownPlayers[dstName] = dstGUID
 		end
 
 		local isMine = srcGUID == playerGUID
@@ -470,8 +471,8 @@
 		local duration, debuffType = PB:GetSpellData(spellID, isPlayer)
 
 		if duration then
-			if auraType == "DEBUFF" then 
-				auraType = debuffType 
+			if auraType == "DEBUFF" then
+				auraType = debuffType
 			end
 
 			duration = duration * dr
@@ -481,7 +482,7 @@
 				PB:SetAuraInstance(dstGUID, spellName, spellID, icon, stackCount, auraType, duration, duration, isMine)
 				PB:UpdatePlate(dstGUID, isPlayer and dstName or nil)
 			end
-		elseif debug then
+		elseif DEBUG then
 			print(format('Missing aura info, please report: [%s] = "0;0", -- %s', spellID, spellName))
 		end
 	end
@@ -527,13 +528,16 @@
 			PB:OnAuraRemoved(dstGUID, dstName, spellName, spellID, NOUPDATE)
 			PB:OnAuraApplied(srcGUID, dstGUID, dstName, spellID, spellName, auraType, stackCount)
 
-		elseif eventType == "SPELL_AURA_REMOVED" or eventType == "SPELL_AURA_DISPEL" or eventType == "SPELL_AURA_STOLEN" then
+		elseif eventType == "SPELL_AURA_REMOVED" then
+			PB:OnAuraRemoved(dstGUID, dstName, spellName, spellID)
+
+		elseif eventType == "SPELL_DISPEL" or eventType == "SPELL_STOLEN" then
 			PB:OnAuraRemoved(dstGUID, dstName, spellName, spellID)
 
 		elseif eventType == "SPELL_CAST_SUCCESS" and spellSchool == 1 then
 			PB:OnMeleeRefresh(srcGUID, dstGUID, dstName, spellID, spellName, auraType, stackCount)
 
-		elseif (eventType == "UNIT_DIED" and select(2, IsInInstance()) ~= "arena") or eventType == "PARTY_KILL" then
+		elseif eventType == "UNIT_DIED" then
 			PB:WipeAuraCache(dstGUID)
 			PB:ResetDR(dstGUID)
 		end
@@ -570,8 +574,8 @@
 			if isMine or (isMine == nil and duration and duration > 0) then
 				if PB:IsTracked(name, true) then
 					-- Check if we have an existing instance of this aura, ignore if we do. Needed due to forced UNIT_AURA updates on mouseover.
-					local _, _, _, acount, _, _, _, _, expiration = PB:GetAuraInstance(guid, name)
-					if not expiration or count ~= acount or round(expiration, 1) ~= round(time+timeLeft, 1) then
+					local _, _, _, aCount, _, _, _, _, expiration = PB:GetAuraInstance(guid, name)
+					if not expiration or count ~= aCount or round(expiration, 1) ~= round(time+timeLeft, 1) then
 						PB:SetAuraInstance(guid, name, nil, icon, count, dtype, duration, timeLeft, true)
 						needUpdate = true
 					end
@@ -586,8 +590,8 @@
 			if isMine or (isMine == nil and duration and duration > 0) then
 				if PB:IsTracked(name, true) then
 					-- Check if we have an existing instance of this aura, ignore if we do. Needed due to forced UNIT_AURA updates on mouseover.
-					local _, _, _, acount, _, _, _, _, expiration = PB:GetAuraInstance(guid, name)
-					if not expiration or count ~= acount or round(expiration, 1) ~= round(time+timeLeft, 1) then
+					local _, _, _, aCount, _, _, _, _, expiration = PB:GetAuraInstance(guid, name)
+					if not expiration or count ~= aCount or round(expiration, 1) ~= round(time+timeLeft, 1) then
 						PB:SetAuraInstance(guid, name, nil, icon, count, "BUFF", duration, timeLeft, true)
 						needUpdate = true
 					end
@@ -620,7 +624,6 @@
 	end
 
 	function PB:UPDATE_MOUSEOVER_UNIT()
-		--print("PB:UPDATE_MOUSEOVER_UNIT()")
 		mouseGUID = nil
 		hasMouseover = IsValidTarget("mouseover")
 		if hasMouseover then
@@ -649,7 +652,7 @@
 	end
 
 	function PB:OnEvent(event, ...)
-		self[event](self, ...) 
+		self[event](self, ...)
 	end
 
 	PB:SetScript("OnEvent", PB.OnEvent)
@@ -676,6 +679,7 @@
 		frame.pbicon = nil
 
 		local guid = knownPlayers[frame.pbname]
+
 		if guid then
 			PB:OnPlateIdentified(frame, guid)
 		elseif hasTarget and not targetPlate then
@@ -697,6 +701,7 @@
 			targetPlate = nil
 		end
 
+		-- Hide debuffs
 		if frame.debuffs then
 			for i = 1, conf.auraRows*conf.aurasPerRow do
 				if frame.debuffs[i] then
@@ -730,16 +735,22 @@
 		else
 			frame:SetScript("OnHide", PlateOnHide)
 		end
+
 		frame.pbsetup = true
 		PlateOnShow(frame)
 	end
 
 	local function IsNameplate(frame)
-		if frame:GetName() then return false end
+		if frame:GetName() then
+			return false
+		end
+
 		local overlay = frame:GetRegions()
+
 		if overlay and overlay:GetObjectType() == "Texture" then
 			return overlay:GetTexture() == "Interface\\Tooltips\\Nameplate-Border"
 		end
+
 		return false
 	end
 
@@ -753,15 +764,15 @@
 	end
 
 	function PB:OnUpdate(elapsed)
-
-		if updateTarget then 
+		if updateTarget then
 			PB:UpdateTargetPlate()
 		end
 		
-		if updateMouseOver then 
-			PB:UpdateMouseOverPlate() 
+		if updateMouseOver then
+			PB:UpdateMouseOverPlate()
 		end
 
+		-- UNIT_AURA doesn't fire for mouseover in TBC, so force these updates.
 		if ForceMouseoverUpdate and hasMouseover then
 			MouseoverUpdateNext = MouseoverUpdateNext + elapsed
 
@@ -777,6 +788,7 @@
 		end
 
 		newChildren = WorldFrame:GetNumChildren()
+
 		if newChildren > numChildren then
 			GetNewPlates(newChildren, WorldFrame:GetChildren())
 			numChildren = newChildren
@@ -824,8 +836,9 @@
 	end
 
 	function PB:GetMouseOverPlate()
-		-- compare name and level too as this is pretty unreliable..
-		local name, level = UnitName("mouseover"), tostring(UnitLevel("mouseover"))
+		-- compare name and level too as this can be pretty unreliable..
+		local name = UnitName("mouseover")
+		local level tostring(UnitLevel("mouseover"))
 		local count = 0
 		local plate
 
@@ -835,6 +848,7 @@
 				count = count + 1
 			end
 		end
+
 		-- this was a fun bug to hunt down
 		if count == 1 then
 			return plate
@@ -862,8 +876,8 @@
 
 			local plate
 
-			if mouseGUID == targetGUID then 
-				return 
+			if mouseGUID == targetGUID then
+				return
 			elseif knownPlates[mouseGUID] then
 				PB:UNIT_AURA("mouseover")
 				return

@@ -13,6 +13,9 @@
 
 
 	local guiFrame
+	local frameWidth = 460
+	local frameHeight = 600
+	local listWidth = 195
 
 	---------------------------------------------------------------------------------------------
 
@@ -46,6 +49,7 @@
 			fontSize = 10,
 			fontOffx = 1,
 			fontOffy = 1,
+			borderSize = 1,
 			auraList = {},
 			disableDuration = false,
 			disableCooldown = false,
@@ -301,7 +305,6 @@
 	end
 
 	local function ApplySettings()
-
 		_G["PlateBufferListEditInput"]:ClearFocus()
 		_G["PlateBufferInput1"]:ClearFocus()
 		_G["PlateBufferInput3"]:ClearFocus()
@@ -313,6 +316,7 @@
 		_G["PlateBufferInput9"]:ClearFocus()
 		_G["PlateBufferInput10"]:ClearFocus()
 		_G["PlateBufferInput11"]:ClearFocus()
+		_G["PlateBufferInput12"]:ClearFocus()
 		
 		PBCONF.activeprofile.auraWidth = _G["PlateBufferInput1"]:GetText()
 		PBCONF.activeprofile.auraHeight = _G["PlateBufferInput3"]:GetText()
@@ -324,15 +328,19 @@
 		PBCONF.activeprofile.fontOffy = _G["PlateBufferInput9"]:GetText()
 		PBCONF.activeprofile.auraOffx = _G["PlateBufferInput10"]:GetText()
 		PBCONF.activeprofile.auraOffy = _G["PlateBufferInput11"]:GetText()
+		PBCONF.activeprofile.borderSize = _G["PlateBufferInput12"]:GetText() or 1
 		PBCONF.activeprofile.disableDuration = _G["PlateBufferCheckbox1"]:GetChecked() or false
 		PBCONF.activeprofile.disableCooldown = _G["PlateBufferCheckbox2"]:GetChecked() or false
 
 		PBCONF.activeprofile.auraList = {}
+
 		for line in string.gmatch(_G["PlateBufferListEditInput"]:GetText(), "[^\r\n]+") do
-			local aura, show = strsplit("/", line)
-			if aura and show and (show == "mine" or show == "all") then
-				PBCONF.activeprofile.auraList[aura] = show
-			end
+			PBCONF.activeprofile.auraList[line] = "mine"
+
+		end
+
+		for line in string.gmatch(_G["PlateBufferListEditInput2"]:GetText(), "[^\r\n]+") do
+			PBCONF.activeprofile.auraList[line] = "all"
 		end
 
 		ReloadUI()
@@ -340,9 +348,7 @@
 	end
 
 	local function LoadProfile(profile)
-
 		if PBCONF.profiles[profile] then
-
 			_G["PlateBufferInput1"]:SetText(PBCONF.profiles[profile].auraWidth)
 			_G["PlateBufferInput3"]:SetText(PBCONF.profiles[profile].auraHeight)
 			_G["PlateBufferInput2"]:SetText(PBCONF.profiles[profile].aurasPerRow)
@@ -353,17 +359,29 @@
 			_G["PlateBufferInput9"]:SetText(PBCONF.profiles[profile].fontOffy)
 			_G["PlateBufferInput10"]:SetText(PBCONF.profiles[profile].auraOffx)
 			_G["PlateBufferInput11"]:SetText(PBCONF.profiles[profile].auraOffy)
+			_G["PlateBufferInput12"]:SetText(PBCONF.profiles[profile].borderSize or 1)
 
 			-- These will be nil on old installations, but should still work just fine.
 			_G["PlateBufferCheckbox1"]:SetChecked(PBCONF.profiles[profile].disableDuration)
 			_G["PlateBufferCheckbox2"]:SetChecked(PBCONF.profiles[profile].disableCooldown)
+			
+			local own = {}
+			local all = {}
 
-			local list = {}
+			-- get aura lists
 			for k,v in pairs(PBCONF.profiles[profile].auraList) do
-				list[#list+1] = k.."/"..v
+				if v == "all" then
+					all[#all+1] = k
+				elseif v == "mine" then
+					own[#own+1] = k
+				end
 			end
-			table.sort(list)
-			_G["PlateBufferListEditInput"]:SetText(table.concat(list, "\n"))
+
+			table.sort(own)
+			table.sort(all)
+
+			_G["PlateBufferListEditInput"]:SetText(table.concat(own, "\n"))
+			_G["PlateBufferListEditInput2"]:SetText(table.concat(all, "\n"))
 		end
 	end
 
@@ -372,28 +390,38 @@
 			PBCONF.profiles[profile] = nil
 			return true
 		end
+
 		return false
 	end
 
 	local function RenameProfile(oldName, newName)
 		local oldGroup = PBCONF.profiles[oldName]
+
 		if not oldGroup or not newName or newName == "" or PBCONF.profiles[newName] or oldName == newName then
 			return false
 		end
+
 		RemoveProfile(oldName)
 		NewProfile(newName)
+
 		oldGroup.name = newName
 		local newGroup = PBCONF.profiles[newName]
-		for k,v in pairs(oldGroup) do
+
+		for k, v in pairs(oldGroup) do
 			newGroup[k] = v
 		end
+
 		return true
 	end
 
 	-- a dropdown menu item was selected
 	local function ProfileDropdown_OnClick()
 		local dropdownGroup = _G["PlateBufferDropdownGroup"]
-		if GetCurrentKeyBoardFocus() then GetCurrentKeyBoardFocus():ClearFocus() end
+
+		if GetCurrentKeyBoardFocus() then
+			GetCurrentKeyBoardFocus():ClearFocus()
+		end
+
 		UIDropDownMenu_SetSelectedValue(dropdownGroup, this.value)
 		LoadProfile(this.value)
 		SetActiveProfile(this.value)
@@ -405,9 +433,9 @@
 		local dropdownGroup = _G["PlateBufferDropdownGroup"]
 
 		local list = {}
-			for k,v in pairs(PBCONF.profiles) do
-				list[#list+1] = k
-			end
+		for k,v in pairs(PBCONF.profiles) do
+			list[#list+1] = k
+		end
 		table.sort(list)
 
 		for i, v in pairs(list) do
@@ -430,9 +458,11 @@
 				hideOnEscape = true,
 				hasEditBox = true,
 				preferredIndex = 3, -- to avoid interferring with Blizzard UI popups
+
 				OnShow = function()
 					_G[this:GetName().."EditBox"]:SetText("")
 				end,
+
 				OnAccept = function()
 					local name = _G[this:GetParent():GetName().."EditBox"]:GetText()
 					if NewProfile(name) then
@@ -442,10 +472,12 @@
 						UIDropDownMenu_SetSelectedValue(_G["PlateBufferDropdownGroup"], PBCONF.activeprofile.name)
 					end
 				end,
+
 				EditBoxOnEnterPressed = function()
 					StaticPopupDialogs["PB_POPUP_NEW"]:OnAccept()
 					this:GetParent():Hide()
 				end,
+
 				EditBoxOnEscapePressed = function()
 					this:GetParent():Hide()
 				end,
@@ -470,9 +502,11 @@
 				hideOnEscape = true,
 				hasEditBox = true,
 				preferredIndex = 3, -- to avoid interferring with Blizzard UI popups
+
 				OnShow = function()
 					_G[this:GetName().."EditBox"]:SetText(PBCONF.activeprofile.name)
 				end,
+
 				OnAccept = function()
 					local name = _G[this:GetParent():GetName().."EditBox"]:GetText()
 					if RenameProfile(PBCONF.activeprofile.name, name) then
@@ -482,10 +516,12 @@
 						UIDropDownMenu_SetSelectedValue(_G["PlateBufferDropdownGroup"], PBCONF.activeprofile.name)
 					end
 				end,
+
 				EditBoxOnEnterPressed = function()
 					StaticPopupDialogs["PB_POPUP_RENAME"]:OnAccept()
 					this:GetParent():Hide()
 				end,
+
 				EditBoxOnEscapePressed = function()
 					this:GetParent():Hide()
 				end,
@@ -543,43 +579,56 @@
 		table.insert(UISpecialFrames, guiFrame:GetName()) -- make it closable with escape key
 		guiFrame:SetFrameStrata("HIGH")
 		guiFrame:SetBackdrop({
-			bgFile="Interface/Tooltips/UI-Tooltip-Background",
-			edgeFile="Interface/DialogFrame/UI-DialogBox-Border",
-			tile=1, tileSize=32, edgeSize=32,
-			insets={left=11, right=12, top=12, bottom=11}
+			bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+			edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+			tile = 1,
+			tileSize = 32,
+			edgeSize = 32,
+			insets = {
+				left = 11,
+				right = 12,
+				top = 12,
+				bottom = 11
+			}
 		})
-		guiFrame:SetBackdropColor(0,0,0,1)
+
+		guiFrame:SetBackdropColor(0, 0, 0, 1)
 		guiFrame:SetPoint("CENTER")
-		guiFrame:SetWidth(400)
-		guiFrame:SetHeight(540)
+		guiFrame:SetWidth(frameWidth)
+		guiFrame:SetHeight(frameHeight)
 		guiFrame:SetMovable(true)
 		guiFrame:EnableMouse(true)
 		guiFrame:RegisterForDrag("LeftButton")
 		guiFrame:SetScript("OnDragStart", guiFrame.StartMoving)
 		guiFrame:SetScript("OnDragStop", guiFrame.StopMovingOrSizing)
+
 		guiFrame:SetScript("OnMouseDown", function(self, button)
 			if button == "LeftButton" and not self.isMoving then
 				self:StartMoving()
 				self.isMoving = true
 			end
 		end)
+
 		guiFrame:SetScript("OnMouseUp", function(self, button)
 			if button == "LeftButton" and self.isMoving then
 				self:StopMovingOrSizing()
 				self.isMoving = false
 			end
 		end)
+
 		guiFrame:SetScript("OnHide", function(self)
 			if self.isMoving then
 				self:StopMovingOrSizing()
 				self.isMoving = false
 			end
 		end)
+
 		guiFrame:SetScript("OnShow", function()
 			LoadProfile(PBCONF.activeprofile.name)
 			UIDropDownMenu_Initialize(_G["PlateBufferDropdownGroup"], ProfileDropdown_Initialize)
 			UIDropDownMenu_SetSelectedValue(_G["PlateBufferDropdownGroup"], PBCONF.activeprofile.name)
 		end)
+
 		guiFrame:Hide()
 
 
@@ -598,70 +647,104 @@
 
 		local dropdownGroup = CreateFrame("frame", "PlateBufferDropdownGroup", guiFrame, "UIDropDownMenuTemplate")
 		dropdownGroup:SetPoint("TOPLEFT", guiFrame, "TOPLEFT", 5, -42)
-		UIDropDownMenu_SetWidth(145, dropdownGroup)
+		UIDropDownMenu_SetWidth(160, dropdownGroup)
 
 		local textDescription = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
 		textDescription:SetPoint("BOTTOMLEFT", dropdownGroup, "TOPLEFT", 18, 3)
 		textDescription:SetText("Profile")
 
-		local buttonNew = CreateFrame("Button", "PlateBufferButtonNew", guiFrame, "UIPanelButtonTemplate")
-		buttonNew:SetWidth(62)
-		buttonNew:SetHeight(26)
-		buttonNew:SetPoint("TOPLEFT", dropdownGroup, "TOPRIGHT", -10, 0)
-		buttonNew:SetPoint("LEFT", checkboxPlateBuffer, "LEFT", 0, 0)
-		_G[buttonNew:GetName().."Text"]:SetText("New")
-		buttonNew:SetScript("OnClick", NewButtonClick)
-
 		local buttonRename = CreateFrame("Button", "PlateBufferButtonRename", guiFrame, "UIPanelButtonTemplate")
-		buttonRename:SetWidth(62)
-		buttonRename:SetHeight(26)
-		buttonRename:SetPoint("TOPLEFT", buttonNew, "TOPRIGHT", 2, 0)
-		_G[buttonRename:GetName().."Text"]:SetText("Rename")
+		buttonRename:SetWidth(115)
+		buttonRename:SetHeight(24)
+		--buttonRename:SetPoint("TOPLEFT", buttonNew, "TOPRIGHT", 2, 0)
+		buttonRename:SetPoint("TOPLEFT", dropdownGroup, "TOPRIGHT", -10, 0)
+		_G[buttonRename:GetName().."Text"]:SetText("Rename profile")
 		buttonRename:SetScript("OnClick", RenameButtonClick)
 
 		local buttonDelete = CreateFrame("Button", "PlateBufferButtonDelete", guiFrame, "UIPanelButtonTemplate")
-		buttonDelete:SetWidth(62)
-		buttonDelete:SetHeight(26)
+		buttonDelete:SetWidth(115)
+		buttonDelete:SetHeight(24)
 		buttonDelete:SetPoint("TOPLEFT", buttonRename, "TOPRIGHT", 2, 0)
-		_G[buttonDelete:GetName().."Text"]:SetText("Delete")
+		_G[buttonDelete:GetName().."Text"]:SetText("Delete profile")
 		buttonDelete:SetScript("OnClick", DeleteButtonClick)
+
+		local buttonNew = CreateFrame("Button", "PlateBufferButtonNew", guiFrame, "UIPanelButtonTemplate")
+		buttonNew:SetWidth(115)
+		buttonNew:SetHeight(24)
+		buttonNew:SetPoint("TOPLEFT", dropdownGroup, "TOPRIGHT", -10, -25)
+		_G[buttonNew:GetName().."Text"]:SetText("New profile")
+		buttonNew:SetScript("OnClick", NewButtonClick)
+
+		local buttonApply = CreateFrame("Button", "PlateBufferButtonApply", guiFrame, "UIPanelButtonTemplate")
+		buttonApply:SetWidth(115)
+		buttonApply:SetHeight(24)
+		buttonApply:SetPoint("TOPLEFT", buttonNew, "TOPRIGHT", 2, 0)
+		_G[buttonApply:GetName().."Text"]:SetText("Apply settings")
+		buttonApply:SetScript("OnClick", ApplySettings)
 
 		-- separator 1
 		local lineSeparator1 = guiFrame:CreateTexture()
 		lineSeparator1:SetTexture(.4, .4, .4)
-		lineSeparator1:SetPoint("TOP", guiFrame, "TOP", 0, 0-(guiFrame:GetTop()-buttonNew:GetBottom())-12)
+		lineSeparator1:SetPoint("TOP", guiFrame, "TOP", 0, 0-(guiFrame:GetTop()-buttonNew:GetBottom())-8)
 		lineSeparator1:SetWidth(guiFrame:GetWidth()-36)
-		lineSeparator1:SetHeight(3)
+		lineSeparator1:SetHeight(2)
 
 		-- AURA CONFIG
 
-		-- width
-		local input1 = CreateFrame("EditBox", "PlateBufferInput1", guiFrame, "InputBoxTemplate")
-		input1:SetWidth(32)
-		input1:SetHeight(12)
-		input1:SetPoint("TOPLEFT", lineSeparator1, "BOTTOMLEFT", 80, -12)
-		input1:SetNumeric(true)
-		input1:SetMaxLetters(2)
-		input1:SetAutoFocus(false)
-		input1:SetScript("OnEnterPressed", function() this:ClearFocus() end)
-		input1:SetScript("OnEditFocusLost", function()
-			local value = tonumber(input1:GetText())
-			if not value or value < 4 then
-				value = 4
-				input1:SetText(value)
+		local group1Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		group1Label:SetPoint("TOPLEFT", lineSeparator1, "BOTTOMLEFT", 6, -8)
+		group1Label:SetText("Aura frame")
+
+
+		-- Frame Offset x
+		local input10 = CreateFrame("EditBox", "PlateBufferInput10", guiFrame, "InputBoxTemplate")
+		input10:SetWidth(32)
+		input10:SetHeight(12)
+		input10:SetPoint("TOP", lineSeparator1, "BOTTOM", 35, -8)
+		--input10:SetNumeric(true)
+		input10:SetMaxLetters(3)
+		input10:SetAutoFocus(false)
+		input10:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+		input10:SetScript("OnEditFocusLost", function()
+			local value = tonumber(input10:GetText())
+			if not value then
+				value = 1
+				input10:SetText(value)
 			end
-			--PBCONF.activeprofile.auraWidth = value
 		end)
 
-		local input1Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		input1Label:SetPoint("RIGHT", input1, "LEFT", -15, 0)
-		input1Label:SetText("Aura width")
+		local input10Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		input10Label:SetPoint("RIGHT", input10, "LEFT", -15, 0)
+		input10Label:SetText("Frame x-offset")
+
+
+		-- Frame Offset Y
+		local input11 = CreateFrame("EditBox", "PlateBufferInput11", guiFrame, "InputBoxTemplate")
+		input11:SetWidth(32)
+		input11:SetHeight(12)
+		input11:SetPoint("TOPRIGHT", lineSeparator1, "BOTTOMRIGHT", -10, -8)
+		--input11:SetNumeric(true)
+		input11:SetMaxLetters(3)
+		input11:SetAutoFocus(false)
+		input11:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+		input11:SetScript("OnEditFocusLost", function()
+			local value = tonumber(input11:GetText())
+			if not value then
+				value = 1
+				input11:SetText(value)
+			end
+		end)
+
+		local input11Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		input11Label:SetPoint("RIGHT", input11, "LEFT", -15, 0)
+		input11Label:SetText("Frame y-offset")
+
 
 		-- Per Row
 		local input2 = CreateFrame("EditBox", "PlateBufferInput2", guiFrame, "InputBoxTemplate")
 		input2:SetWidth(32)
 		input2:SetHeight(12)
-		input2:SetPoint("TOP", input1, "BOTTOM", 0, -12)
+		input2:SetPoint("TOP", input10, "BOTTOM", 0, -12)
 		input2:SetNumeric(true)
 		input2:SetMaxLetters(2)
 		input2:SetAutoFocus(false)
@@ -674,42 +757,18 @@
 				value = 10
 			end
 			input2:SetText(value)
-			--PBCONF.activeprofile.aurasPerRow = value
 		end)
 
 		local input2Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		input2Label:SetPoint("RIGHT", input2, "LEFT", -15, 0)
-		input2Label:SetText("Per Row")
-
-
-		-- Aura Height
-		local input3 = CreateFrame("EditBox", "PlateBufferInput3", guiFrame, "InputBoxTemplate")
-		input3:SetWidth(32)
-		input3:SetHeight(12)
-		input3:SetPoint("TOP", lineSeparator1, "BOTTOM", 35, -12)
-		input3:SetNumeric(true)
-		input3:SetMaxLetters(2)
-		input3:SetAutoFocus(false)
-		input3:SetScript("OnEnterPressed", function() this:ClearFocus() end)
-		input3:SetScript("OnEditFocusLost", function()
-			local value = tonumber(input3:GetText())
-			if not value or value < 4 then
-				value = 4
-				input3:SetText(value)
-			end
-			--PBCONF.activeprofile.auraHeight = value
-		end)
-
-		local input3Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		input3Label:SetPoint("RIGHT", input3, "LEFT", -15, 0)
-		input3Label:SetText("Aura height")
+		input2Label:SetText("Auras Per Row")
 
 
 		-- num rows
 		local input4 = CreateFrame("EditBox", "PlateBufferInput4", guiFrame, "InputBoxTemplate")
 		input4:SetWidth(32)
 		input4:SetHeight(12)
-		input4:SetPoint("TOP", input3, "BOTTOM", 0, -12)
+		input4:SetPoint("TOP", input11, "BOTTOM", 0, -12)
 		input4:SetNumeric(true)
 		input4:SetMaxLetters(3)
 		input4:SetAutoFocus(false)
@@ -720,45 +779,95 @@
 				value = 1
 				input4:SetText(value)
 			end
-			--PBCONF.activeprofile.auraRows = value
 		end)
 
 		local input4Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		input4Label:SetPoint("RIGHT", input4, "LEFT", -15, 0)
-		input4Label:SetText("Num Rows")
+		input4Label:SetText("Number of Rows")
 
 
-		-- disabled
-		local input5 = CreateFrame("EditBox", "PlateBufferInput5", guiFrame, "InputBoxTemplate")
-		input5:SetWidth(32)
-		input5:SetHeight(12)
-		input5:SetPoint("TOPRIGHT", lineSeparator1, "BOTTOMRIGHT", -10, -12)
-		input5:SetNumeric(true)
-		input5:SetMaxLetters(3)
-		input5:SetAutoFocus(false)
-		input5:SetScript("OnEnterPressed", function() this:ClearFocus() end)
-		input5:SetScript("OnEditFocusLost", function()
-			local value = tonumber(input5:GetText())
-			if not value then
-				value = 1
-				input5:SetText(value)
+		-- Group Separator 1
+		local groupSeparator1 = guiFrame:CreateTexture()
+		groupSeparator1:SetTexture(.4, .4, .4)
+		groupSeparator1:SetPoint("TOP", guiFrame, "TOP", 0, -160)
+		groupSeparator1:SetWidth(guiFrame:GetWidth()-36)
+		groupSeparator1:SetHeight(2)
+		
+
+		local group2Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		group2Label:SetPoint("TOPLEFT", groupSeparator1, "BOTTOMLEFT", 6, -6)
+		group2Label:SetText("Aura icon")
+
+
+		-- Aura Height
+		local input3 = CreateFrame("EditBox", "PlateBufferInput3", guiFrame, "InputBoxTemplate")
+		input3:SetWidth(32)
+		input3:SetHeight(12)
+		input3:SetPoint("TOP", groupSeparator1, "BOTTOM", 35, -8)
+		input3:SetNumeric(true)
+		input3:SetMaxLetters(2)
+		input3:SetAutoFocus(false)
+		input3:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+		input3:SetScript("OnEditFocusLost", function()
+			local value = tonumber(input3:GetText())
+			if not value or value < 4 then
+				value = 4
+				input3:SetText(value)
 			end
-			--PBCONF.activeprofile.auraSpacing = value
 		end)
 
-		local input5Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		input5Label:SetPoint("RIGHT", input5, "LEFT", -15, 0)
-		input5Label:SetText("Spacing")
-		-- Disabled for now
-		input5Label:Hide()
-		input5:Hide()
+		local input3Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		input3Label:SetPoint("RIGHT", input3, "LEFT", -15, 0)
+		input3Label:SetText("Aura height")
+
+		-- Aura Width
+		local input1 = CreateFrame("EditBox", "PlateBufferInput1", guiFrame, "InputBoxTemplate")
+		input1:SetWidth(32)
+		input1:SetHeight(12)
+		input1:SetPoint("TOPRIGHT", groupSeparator1, "BOTTOMRIGHT", -10, -8)
+		input1:SetNumeric(true)
+		input1:SetMaxLetters(2)
+		input1:SetAutoFocus(false)
+		input1:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+		input1:SetScript("OnEditFocusLost", function()
+			local value = tonumber(input1:GetText())
+			if not value or value < 4 then
+				value = 4
+				input1:SetText(value)
+			end
+		end)
+
+		local input1Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		input1Label:SetPoint("RIGHT", input1, "LEFT", -15, 0)
+		input1Label:SetText("Aura width")
 
 
-		-- Spacing
+		-- Border Size
+		local input12 = CreateFrame("EditBox", "PlateBufferInput12", guiFrame, "InputBoxTemplate")
+		input12:SetWidth(32)
+		input12:SetHeight(12)
+		input12:SetPoint("TOP", input3, "BOTTOM", 0, -8)
+		input12:SetNumeric(true)
+		input12:SetMaxLetters(2)
+		input12:SetAutoFocus(false)
+		input12:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+		input12:SetScript("OnEditFocusLost", function()
+			local value = tonumber(input12:GetText())
+			if not value then
+				value = 1
+				input12:SetText(value)
+			end
+		end)
+
+		local input6Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		input6Label:SetPoint("RIGHT", input12, "LEFT", -15, 0)
+		input6Label:SetText("Border Size")
+
+		-- Aura Spacing
 		local input6 = CreateFrame("EditBox", "PlateBufferInput6", guiFrame, "InputBoxTemplate")
 		input6:SetWidth(32)
 		input6:SetHeight(12)
-		input6:SetPoint("TOP", input5, "BOTTOM", 0, -12)
+		input6:SetPoint("TOP", input1, "BOTTOM", 0, -8)
 		input6:SetNumeric(true)
 		input6:SetMaxLetters(2)
 		input6:SetAutoFocus(false)
@@ -769,7 +878,6 @@
 				value = 1
 				input6:SetText(value)
 			end
-			--PBCONF.activeprofile.auraSpacing = value
 		end)
 
 		local input6Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -777,33 +885,33 @@
 		input6Label:SetText("Aura Spacing")
 
 
-		-- FontSize
-		local input7 = CreateFrame("EditBox", "PlateBufferInput7", guiFrame, "InputBoxTemplate")
-		input7:SetWidth(32)
-		input7:SetHeight(12)
-		input7:SetPoint("TOP", input2, "BOTTOM", 0, -12)
-		input7:SetNumeric(true)
-		input7:SetMaxLetters(2)
-		input7:SetAutoFocus(false)
-		input7:SetScript("OnEnterPressed", function() this:ClearFocus() end)
-		input7:SetScript("OnEditFocusLost", function()
-			local value = tonumber(input7:GetText())
-			if not value or value < 4 then
-				input7:SetText(4)
-			end
-			--PBCONF.activeprofile.fontSize = value
-		end)
+		-- Disable cooldown texture
+		local checkbox2 = CreateFrame("CheckButton", "PlateBufferCheckbox2", guiFrame, "UICheckButtonTemplate")
+		checkbox2:SetPoint("TOPRIGHT", input6, "BOTTOMRIGHT", 5, -2)
+		
+		local checkbox2Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		checkbox2Label:SetPoint("RIGHT", checkbox2, "LEFT", -2, 2)
+		checkbox2Label:SetText("Disable cooldown texture")
+		
 
-		local input7Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		input7Label:SetPoint("RIGHT", input7, "LEFT", -15, 0)
-		input7Label:SetText("Font Size")
+
+		-- Group Separator 2
+		local groupSeparator2 = guiFrame:CreateTexture()
+		groupSeparator2:SetTexture(.4, .4, .4)
+		groupSeparator2:SetPoint("TOP", guiFrame, "TOP", 0, -235)
+		groupSeparator2:SetWidth(guiFrame:GetWidth()-36)
+		groupSeparator2:SetHeight(2)
+		
+		local group3Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		group3Label:SetPoint("TOPLEFT", groupSeparator2, "BOTTOMLEFT", 6, -6)
+		group3Label:SetText("Aura text")
 
 
 		-- Font Offset x
 		local input8 = CreateFrame("EditBox", "PlateBufferInput8", guiFrame, "InputBoxTemplate")
 		input8:SetWidth(32)
 		input8:SetHeight(12)
-		input8:SetPoint("TOP", input4, "BOTTOM", 0, -12)
+		input8:SetPoint("TOP", groupSeparator2, "BOTTOM", 35, -8)
 		--input8:SetNumeric(true)
 		input8:SetMaxLetters(3)
 		input8:SetAutoFocus(false)
@@ -814,19 +922,18 @@
 				value = 1
 				input8:SetText(value)
 			end
-			--PBCONF.activeprofile.fontOffx = value
 		end)
 
 		local input8Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		input8Label:SetPoint("RIGHT", input8, "LEFT", -15, 0)
-		input8Label:SetText("Font x pos")
+		input8Label:SetText("Font x-offset")
 
 
 		-- Font Offset y
 		local input9 = CreateFrame("EditBox", "PlateBufferInput9", guiFrame, "InputBoxTemplate")
 		input9:SetWidth(32)
 		input9:SetHeight(12)
-		input9:SetPoint("TOP", input6, "BOTTOM", 0, -12)
+		input9:SetPoint("TOPRIGHT", groupSeparator2, "BOTTOMRIGHT", -10, -8)
 		--input9:SetNumeric(true)
 		input9:SetMaxLetters(3)
 		input9:SetAutoFocus(false)
@@ -837,79 +944,48 @@
 				value = 1
 				input9:SetText(value)
 			end
-			--PBCONF.activeprofile.fontOffy = value
 		end)
 
 		local input9Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		input9Label:SetPoint("RIGHT", input9, "LEFT", -15, 0)
-		input9Label:SetText("Font y pos")
+		input9Label:SetText("Font y-offset")
 
 
-		-- Frame Offset x
-		local input10 = CreateFrame("EditBox", "PlateBufferInput10", guiFrame, "InputBoxTemplate")
-		input10:SetWidth(32)
-		input10:SetHeight(12)
-		input10:SetPoint("TOP", input7, "BOTTOM", 0, -12)
-		--input10:SetNumeric(true)
-		input10:SetMaxLetters(3)
-		input10:SetAutoFocus(false)
-		input10:SetScript("OnEnterPressed", function() this:ClearFocus() end)
-		input10:SetScript("OnEditFocusLost", function()
-			local value = tonumber(input10:GetText())
-			if not value then
-				value = 1
-				input10:SetText(value)
+		-- FontSize
+		local input7 = CreateFrame("EditBox", "PlateBufferInput7", guiFrame, "InputBoxTemplate")
+		input7:SetWidth(32)
+		input7:SetHeight(12)
+		input7:SetPoint("TOP", input9, "BOTTOM", 0, -12)
+		input7:SetNumeric(true)
+		input7:SetMaxLetters(2)
+		input7:SetAutoFocus(false)
+		input7:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+		input7:SetScript("OnEditFocusLost", function()
+			local value = tonumber(input7:GetText())
+			if not value or value < 4 then
+				input7:SetText(4)
 			end
-			--PBCONF.activeprofile.auraOffy = value
 		end)
 
-		local input10Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		input10Label:SetPoint("RIGHT", input10, "LEFT", -15, 0)
-		input10Label:SetText("Frame x pos")
-
-
-		-- Frame Offset Y
-		local input11 = CreateFrame("EditBox", "PlateBufferInput11", guiFrame, "InputBoxTemplate")
-		input11:SetWidth(32)
-		input11:SetHeight(12)
-		input11:SetPoint("TOP", input8, "BOTTOM", 0, -12)
-		--input11:SetNumeric(true)
-		input11:SetMaxLetters(3)
-		input11:SetAutoFocus(false)
-		input11:SetScript("OnEnterPressed", function() this:ClearFocus() end)
-		input11:SetScript("OnEditFocusLost", function()
-			local value = tonumber(input11:GetText())
-			if not value then
-				value = 1
-				input11:SetText(value)
-			end
-			--PBCONF.activeprofile.auraOffy = value
-		end)
-
-		local input11Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		input11Label:SetPoint("RIGHT", input11, "LEFT", -15, 0)
-		input11Label:SetText("Frame y pos")
+		local input7Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		input7Label:SetPoint("RIGHT", input7, "LEFT", -15, 0)
+		input7Label:SetText("Font Size")
 
 
 		-- Disable duration text
 		local checkbox1 = CreateFrame("CheckButton", "PlateBufferCheckbox1", guiFrame, "UICheckButtonTemplate")
-		checkbox1:SetPoint("TOPLEFT", input10Label, "BOTTOMLEFT", -4, -6)
-		_G[checkbox1:GetName().."Text"]:SetText("Disable duration text")
-		--checkbox1:SetScript("OnClick", function() PBCONF.activeprofile.disableDuration = this:GetChecked() or false end)
+		checkbox1:SetPoint("TOPRIGHT", input8, "BOTTOMRIGHT", 5, -2)
 
-		-- Disable cooldown texture
-		local checkbox2 = CreateFrame("CheckButton", "PlateBufferCheckbox2", guiFrame, "UICheckButtonTemplate")
-		checkbox2:SetPoint("TOPLEFT", input11Label, "BOTTOMLEFT", 25, -6)
-		_G[checkbox2:GetName().."Text"]:SetText("Disable cooldown texture")
-		--checkbox2:SetScript("OnClick", function() PBCONF.activeprofile.disableCooldown = this:GetChecked() or false end)
-
+		local checkbox1Label = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		checkbox1Label:SetPoint("RIGHT", checkbox1, "LEFT", -2, 2)
+		checkbox1Label:SetText("Disable duration text")
 
 		-- separator 2
 		local lineSeparator2 = guiFrame:CreateTexture()
 		lineSeparator2:SetTexture(.4, .4, .4)
-		lineSeparator2:SetPoint("TOP", guiFrame, "TOP", 0, -220)
+		lineSeparator2:SetPoint("TOP", guiFrame, "TOP", 0, -302)
 		lineSeparator2:SetWidth(guiFrame:GetWidth()-36)
-		lineSeparator2:SetHeight(3)
+		lineSeparator2:SetHeight(2)
 		
 
 		-- edit box
@@ -917,34 +993,32 @@
 		local editBoxInput = CreateFrame("EditBox", "PlateBufferListEditInput", editBox)
 		local editBoxScroll = CreateFrame("ScrollFrame", "PlateBufferListEditScroll", editBox, "UIPanelScrollFrameTemplate")
 
-		-- close button - put here to be able to clear focus on the editbox
-		local buttonClose = CreateFrame("Button", "PlateBufferListButtonClose", guiFrame, "UIPanelCloseButton")
-		buttonClose:SetPoint("TOPRIGHT", guiFrame, "TOPRIGHT", -8, -8)
-		buttonClose:SetScript("OnClick", function()
-			editBoxInput:ClearFocus()
-			guiFrame:Hide()
-		end)
-
-		-- apply button
-		local buttonApply = CreateFrame("Button", "PlateBufferButtonApply", guiFrame, "UIPanelButtonTemplate")
-		buttonApply:SetWidth(62)
-		buttonApply:SetHeight(26)
-		buttonApply:SetPoint("TOPRIGHT", lineSeparator1, "TOPRIGHT", -2, -6)
-		_G[buttonApply:GetName().."Text"]:SetText("Apply")
-		buttonApply:SetScript("OnClick", ApplySettings)
+		-- editbox label
+		local editboxLabel = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		editboxLabel:SetPoint("BOTTOM", editBox, "TOP", 0, 3)
+		editboxLabel:SetText("Auras by you")
 
 		-- editBox - main container
-		editBox:SetPoint("TOP", lineSeparator2, "BOTTOM", -10, -6)
+		editBox:SetPoint("TOP", lineSeparator2, "BOTTOM", -10, -26)
 		editBox:SetPoint("BOTTOM", guiFrame, "BOTTOM", 0, 15)
 		editBox:SetPoint("LEFT", guiFrame, "LEFT", 15, 0)
-		editBox:SetPoint("RIGHT", guiFrame, "RIGHT", -34, 0)
+		--editBox:SetPoint("RIGHT", guiFrame, "RIGHT", -34, 0)
+		editBox:SetWidth(listWidth)
 
 		editBox:SetBackdrop({
 			bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 			edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
-			tile=1, tileSize=32, edgeSize=16,
-			insets={left=5, right=5, top=5, bottom=5}})
-		editBox:SetBackdropColor(0,0,0,1)
+			tile = 1,
+			tileSize = 32,
+			edgeSize = 16,
+			insets = { 
+				left = 5,
+				right = 5,
+				top = 5,
+				bottom = 5
+			}
+		})
+		editBox:SetBackdropColor(0, 0, 0, 1)
 
 		editBoxInput:SetWidth(editBox:GetWidth()-20)
 		editBoxInput:SetHeight(editBox:GetHeight()-30)
@@ -966,18 +1040,97 @@
 			local scrollbar = _G[editBoxScroll:GetName() .. "ScrollBar"]
 			local min, max = scrollbar:GetMinMaxValues()
 			if max > 0 and this.max ~= max then
-			this.max = max
-			scrollbar:SetValue(max)
+				this.max = max
+				scrollbar:SetValue(max)
 			end
 		end)
+
 		editBoxInput:SetScript("OnUpdate", function(this)
 			ScrollingEdit_OnUpdate(editBoxScroll)
 		end)
+
 		editBoxInput:SetScript("OnCursorChanged", function()
 			ScrollingEdit_OnCursorChanged(arg1, arg2, arg3, arg4)
 		end)
 
+
+		-- editBox2
+		local editBox2 = CreateFrame("Frame", "PlateBufferListEdit2", guiFrame)
+		local editBox2Input = CreateFrame("EditBox", "PlateBufferListEditInput2", editBox2)
+		local editBox2Scroll = CreateFrame("ScrollFrame", "PlateBufferListEditScroll2", editBox2, "UIPanelScrollFrameTemplate")
+
+		-- editbox label
+		local editboxLabel2 = guiFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		editboxLabel2:SetPoint("BOTTOM", editBox2, "TOP", 0, 3)
+		editboxLabel2:SetText("Auras by anyone")
+
+		-- editBox2 - main container
+		editBox2:SetPoint("TOP", lineSeparator2, "BOTTOM", -10, -26)
+		editBox2:SetPoint("BOTTOM", guiFrame, "BOTTOM", 0, 15)
+		--editBox2:SetPoint("LEFT", editBox, "RIGHT", 15, 0)
+		editBox2:SetPoint("RIGHT", guiFrame, "RIGHT", -34, 0)
+		editBox2:SetWidth(listWidth)
+		
+		editBox2:SetBackdrop({
+			bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+			edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+			tile = 1,
+			tileSize = 32,
+			edgeSize = 16,
+			insets = {
+				left = 5,
+				right = 5,
+				top = 5,
+				bottom = 5
+			}
+		})
+		editBox2:SetBackdropColor(0, 0, 0, 1)
+
+		editBox2Input:SetWidth(editBox2:GetWidth()-20)
+		editBox2Input:SetHeight(editBox2:GetHeight()-30)
+		editBox2Input:SetMultiLine(true)
+		editBox2Input:SetAutoFocus(false)
+		editBox2Input:EnableMouse(true)
+		editBox2Input:SetFont("Fonts/ARIALN.ttf", 13)
+		editBox2Input:SetScript("OnEscapePressed", function() editBox2Input:ClearFocus() end)
+
+		-- editBox2Scroll
+		editBox2Scroll:SetPoint("TOPLEFT", editBox2, "TOPLEFT", 9, -4)
+		editBox2Scroll:SetPoint("BOTTOMRIGHT", editBox2, "BOTTOMRIGHT", -5, 4)
+		editBox2Scroll:EnableMouse(true)
+		editBox2Scroll:SetScript("OnMouseDown", function() editBox2Input:SetFocus() end)
+		editBox2Scroll:SetScrollChild(editBox2Input)
+
+		-- taken from Blizzard's macro UI XML to handle scrolling
+		editBox2Input:SetScript("OnTextChanged", function()
+			local scrollbar = _G[editBox2Scroll:GetName() .. "ScrollBar"]
+			local min, max = scrollbar:GetMinMaxValues()
+			if max > 0 and this.max ~= max then
+				this.max = max
+				scrollbar:SetValue(max)
+			end
+		end)
+
+		editBox2Input:SetScript("OnUpdate", function(this)
+			ScrollingEdit_OnUpdate(editBox2Scroll)
+		end)
+
+		editBox2Input:SetScript("OnCursorChanged", function()
+			ScrollingEdit_OnCursorChanged(arg1, arg2, arg3, arg4)
+		end)
+
+		-- close button
+		local buttonClose = CreateFrame("Button", "PlateBufferListButtonClose", guiFrame, "UIPanelCloseButton")
+		buttonClose:SetPoint("TOPRIGHT", guiFrame, "TOPRIGHT", -8, -8)
+		buttonClose:SetScript("OnClick", function()
+			editBoxInput:ClearFocus()
+			editBox2Input:ClearFocus()
+			guiFrame:Hide()
+		end)
+
 	end
+
+
 
 	---------------------------------------------------------------------------------------------
 
