@@ -5,12 +5,13 @@
 
 ## What does it do
 
-PlateBuffer adds aura icons to enemy unit nameplates. You can choose which auras you want to see. It will track auras that have a duration. The addon does not change your nameplates, only adds aura icons to them so it works with the default nameplates, Aloft, ElvUI and others.
+PlateBuffer adds aura icons to enemy unit nameplates. You can choose which auras you want to see. It will only track auras that have a duration. The addon does not change your nameplates, only adds aura icons to them so it works with the default nameplates, Aloft, ElvUI and others.
 
 ## How to configure
 
-Type `/pb` or `/platebuffer` in game to bring up the config menu. To track new auras click inside the editbox and press enter to make a new line, type in the name of the aura followed by '/mine' or '/all' depending whose auras you want to track. E.g: `Curse of Agony/mine`  
-For dots and other auras that can have multiple instances I recommend only tracking your own.  
+Type `/pb` or `/platebuffer` in game to bring up the config menu.
+To track new auras click inside one of the editboxes and press enter to make a new line and type in the name of the aura you want to track.
+For dots and other auras that can have multiple instances I recommend only tracking your own.
 **Click on 'Apply' after changing something!**
 
 ## How to install
