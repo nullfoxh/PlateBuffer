@@ -101,7 +101,7 @@ PBAD.auraInfo = {
 	[3355] = "20;1", --Freezing Trap Effect (Rank 1)
 	[3409] = "12;3", --Crippling Poison
 	[3436] = "300;2", --Wandering Plague
-	[3600] = "5;1", --Earthbind
+	[3600] = "45;1", --Earthbind
 	[3714] = "600;0", --Path of Frost
 	[4167] = "4;1", --Web (Rank 1)
 	[4511] = "0;0", --Phase Shift
@@ -3168,5 +3168,5 @@ PBAD.auraInfoPvP = {
 	[6215] = 10, -- Fear 3
 
 	[6358] = 10, -- Seduction
-
+	[3600] = 5, --Earthbind
 }
