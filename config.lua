@@ -60,6 +60,283 @@
 
 	local function NewDefaultProfile()
 		local profile = NewProfile("default")
+		if GetLocale() == "frFR" then
+		profile.auraList = {
+
+			-- Racials
+			["Volonté des Réprouvés"] = "all",
+			["Choc martial"] = "all",
+			["Forme de pierre"] = "all",
+			["Perception"] = "all",
+			["Berserker"] = "all",
+			["Fureur sanguinaire"] = "all",
+			["Châtier"] = "all",
+			["Torrent arcanique"] = "all",
+  
+			-- Items
+			["Grenade en adamantite"] = "all",
+			["Bombe en gangrefer"] = "all",
+			["Etourdir"] = "all", -- Deep Thunder/Storm Herald stun
+			["Filet en tisse-néant"] = "all",
+			["Filet épais en tisse-néant"] = "all",
+			["Potion de vive action"] = "all",
+			["Potion de libre action"] = "all",
+			["Libre action ravivée"] = "all",
+			["Libre action"] = "all",
+
+			-- Rogue
+			["Coup bas"] = "all",
+			["Aiguillon perfide"] = "all",
+			["Suriner"] = "all",
+			["Cécité"] = "all",
+			["Assommer"] = "all",
+			["Cécité"] = "all",
+			["Cape d'ombre"] = "all",
+			["Trompe-la-mort"] = "all",
+			["Poussée d'adrénaline"] = "all",
+			["Evasion"] = "all",
+			["Sprint"] = "all",
+			["Lancer mortel"] = "mine",
+			["Coup de pied - Silencieux"] = "all",
+			["Riposte"] = "all",
+			["Sang froid"] = "all",
+			["Rupture"] = "mine",
+			["Garrot"] = "mine",
+			["Garrot - Silence"] = "mine",
+			["Exposer l'armure"] = "all",
+			["Poison douloureux"] = "mine",
+			["Poison mortel"] = "mine",
+			["Poison affaiblissant"] = "mine",
+			["Poison de distraction mentale"] = "mine",
+			["Hébétement"] = "mine", -- blade twisting
+			["Hémorragie"] = "mine",
+			["Frappe fantomatique"] = "all",
+
+
+			-- Warlock
+			["Voile mortel"] = "all",
+			["Peur"] = "all",
+			["Hurlement de terreur"] = "all",
+			["Furie de l'ombre"] = "all",
+			["Séduction"] = "all",
+			["Verrou magique"] = "all",
+			["Bannir"] = "all",
+			["Malédiction d'agonie"] = "mine",
+			["Corruption"] = "mine",
+			["Immolation"] = "mine",
+			["Affliction instable"] = "mine",
+			["Malédiction de faiblesse"] = "mine",
+			["Malédiction de témérité"] = "mine",
+			["Malédiction des éléments"] = "all",
+			["Malédiction des langages"] = "all",
+			["Malédiction funeste"] = "mine",
+			["Siphon de vie"] = "mine",
+			["Graine de Corruption"] = "mine",
+			--["Interception étourdissante"] = "all", -- Felguard
+			["Pyroclasme"] = "all",
+			["Contrecoup"] = "all",
+			["Transe de l'ombre"] = "all",
+			["Domination corrompue"] = "all",
+			["Gardien de l'ombre"] = "all",
+			["Protection du Néant"] = "all",
+			["Malédiction de fatigue"] = "all",
+			["Sacrifice"] = "all",
+
+			-- Priest
+			["Contrôle mental"] = "all",
+			["Cri psychique"] = "all",
+			["Aveuglement"] = "all",
+			["Silence"] = "all",
+			["Gardien de peur"] = "all",
+			["Suppression de la douleur"] = "all",
+			["Infusion de puissance"] = "all",
+			["Entraves des morts-vivants"] = "all",
+			["Grâce d'Elune"] = "all",
+			["Toucher de faiblesse"] = "all",
+			["Garde de l'ombre"] = "all",
+			["Mot de l'ombre : Douleur"] = "mine",
+			["Toucher vampirique"] = "mine",
+			["Etreinte vampirique"] = "mine",
+			["Peste dévorante"] = "mine",
+			["Eclats stellaires"] = "mine",
+			["Flammes sacrées"] = "mine",
+			["Châtier"] = "all",
+			["Mot de pouvoir : Bouclier"] = "all",
+			["Prière de guérison"] = "all",
+			["Maléfice de faiblesse"] = "all",
+			["Apaisement"] = "all",
+
+			-- Mage
+			["Nova de givre"] = "all",
+			["Gel"] = "all",
+			["Morsure de givre"] = "all",
+			["Métamorphose"] = "all",
+			["Contresort - Silencieux"] = "all",
+			["Bloc de glace"] = "all",
+			["Veines glaciales"] = "all",
+			["Pouvoir des arcanes"] = "all",
+			["Souffle du dragon"] = "all",
+			["Vague explosive"] = "mine",
+			["Cône de froid"] = "mine",
+			["Lenteur"] = "all",
+			["Vulnérabilité au Feu"] = "all",
+			["Froid hivernal"] = "mine",
+			["Gardien de feu"] = "all",
+			["Gardien de givre"] = "all",
+			["Barrière de glace"] = "all",
+			["Présence spirituelle"] = "all",
+			["Bouclier de mana"] = "all",
+			["Vitesse flamboyante"] = "all",
+			["Invisibilité"] = "all",
+			["Impact"] = "all",
+			["Eclair de givre"] = "mine",
+			["Choc de flammes"] = "mine",
+			["Evocation"] = "all",
+
+			-- Warrior
+			["Charge étourdissante"] = "all",
+			["Coup traumatisant"] = "all",
+			["Interception étourdissante"] = "all",
+			["Désarmement"] = "all",
+			["Effet étourdissant de la masse"] = "all",
+			["Intervention"] = "all",
+			["Renvoi de sort"] = "all",
+			["Souhait mortel"] = "all",
+			["Rage berserker"] = "all",
+			["Cri d'intimidation"] = "all",
+			["Coup de bouclier - silencieux"] = "all",
+			["Frappe mortelle"] = "mine",
+			["Hurlement perçant"] = "mine",
+			["Pourfendre"] = "mine",
+			["Coup de tonnerre"] = "mine",
+			["Brise-genou"] = "mine",
+			["Brise-genou amélioré"] = "all",
+			["Cri de défi"] = "all",
+			["Coup railleur"] = "all",
+			["Fracasser armure"] = "all",
+			["Cri de guerre"] = "mine",
+			["Cri de commandement"] = "mine",
+			["Rage sanguinaire"] = "all",
+			--["Sanguinaire"] = "all",
+			["Folie sanguinaire"] = "all",
+			["Souhait mortel"] = "all",
+			["Enrager"] = "all",
+			["Dernier rempart"] = "all",
+			["Représailles"] = "all",
+			["Second souffle"] = "all",
+			["Mur protecteur"] = "all",
+			["Attaques circulaires"] = "all",
+			["Maîtrise du blocage"] = "all",
+			["Témérité"] = "all",
+			["Etourdissement vengeur"] = "all",
+			["Provocation"] = "mine",
+
+			-- Druid
+			["Sonner"] = "all",
+			["Cyclone"] = "all",
+			["Sarments"] = "all",
+			["Hibernation"] = "all",
+			["Estropier"] = "all",
+			["Traquenard"] = "all",
+			["Traquenard sanglant"] = "mine",
+			["Innervation"] = "all",
+			["Ecorce"] = "all",
+			["Eclat lunaire"] = "mine",
+			["Effet de charge farouche"] = "all",
+			["Lucioles"] = "mine",
+			["Lucioles (farouche)"] = "mine",
+			["Focalisation céleste"] = "all",
+			["Feu stellaire étourdissant"] = "all",
+			["Essaim d'insectes"] = "mine",
+			["Mutilation (ours)"] = "mine",
+			["Mutilation (félin)"] = "mine",
+			["Déchirure"] = "mine",
+			["Griffure"] = "mine",
+			["Régénération frénétique"] = "all",
+			["Rugissement démoralisant"] = "mine",
+			["Lacérer"] = "mine",
+			["Rugissement provocateur"] = "all",
+			["Rapidité de la nature"] = "all",
+			["Abolir le poison"] = "all",
+			["Célérité"] = "all",
+			["Grondement"] = "all",
+			["Tranquillité"] = "all",
+			["Emprise de la nature"] = "all",
+			["Apaiser les animaux"] = "all",
+
+			-- Hunter
+			["Piège givrant"] = "all",
+			["Effet Piège givrant"] = "all",
+			["Intimidation"] = "all",
+			["Effrayer une bête"] = "all",
+			["Flèche de dispersion"] = "all",
+			["La bête intérieure"] = "all",
+			["Courroux bestial"] = "all",
+			["Flèche-bâillon"] = "all",
+			["Piège"] = "all",
+			["Dissuasion"] = "all",
+			["Piqûre de wyverne"] = "all",
+			["Morsure de vipère"] = "mine",
+			["Morsure de serpent"] = "mine",
+			["Trait de choc"] = "mine",
+			["Barrage commotionnant"] = "mine",
+			["Trait de choc amélioré"] = "all",
+			["Coupure d'ailes"] = "mine",
+			["Coupure d'ailes améliorée"] = "all",
+			["Marque du chasseur"] = "mine",
+			["Fusée éclairante"] = "mine",
+			["Visée"] = "mine",
+			["Flèche noire"] = "mine",
+			["Effet Piège explosif"] = "mine",
+			["Effet de Piège d'immolation"] = "mine",
+			["Guérison du familier"] = "all",
+			["Contre-attaque"] = "all",
+			-- Pet
+			["Crachat de poison"] = "all", -- Serpent
+			["Poison de scorpide"] = "all",
+			["Boutoir"] = "all",
+			--["Hurlement"] = "all", -- Bat / Bird of Prey / Carrion Bird
+			["Souffle de feu"] = "all", -- Dragonhawk
+
+			-- Shaman
+			["Furie sanguinaire"] = "all",
+			["Héroïsme"] = "all",
+			["Lien à la terre"] = "all",
+			["Horion de flammes"] = "mine",
+			["Horion de givre"] = "mine",
+			["Attaque Arme de givre"] = "mine",
+			["Etourdissement de Griffes de pierre"] = "all",
+			["Frappe-tempête"] = "mine",
+			["Bouclier de terre"] = "all",
+			["Bouclier d'eau"] = "all",
+			["Bouclier de foudre"] = "all",
+			["Rapidité de la nature"] = "all",
+			["Totem de Vague de mana"] = "all",
+			["Maîtrise élémentaire"] = "all",
+			["Rage du chaman"] = "all",
+			["Incantation focalisée"] = "all",
+
+			-- Paladin
+			["Marteau de la justice"] = "all",
+			["Repentir"] = "all",
+			["Bouclier divin"] = "all",
+			["Bénédiction de protection"] = "all",
+			["Bénédiction de liberté"] = "all",
+			["Bénédiction de sacrifice"] = "all",
+			["Protection divine"] = "all",
+			["Bouclier du vengeur"] = "mine",
+			["Consécration"] = "mine",
+			["Jugement de justice"] = "mine",
+			["Jugement de lumière"] = "mine",
+			["Jugement de sagesse"] = "mine",
+			["Jugement du Croisé"] = "mine",
+			["Faveur divine"] = "all",
+			["Renvoi des morts-vivants"] = "all",
+			["Courroux vengeur"] = "all",
+			["Renvoi du mal"] = "all",
+
+		}
+		else
 		profile.auraList = {
 
 			-- Racials
@@ -79,7 +356,10 @@
 			["Netherweave Net"] = "all",
 			["Heavy Netherweave Net"] = "all",
 			["Living Free Action Potion"] = "all",
-
+			["Free Action Potion"] = "all",
+			["Living Free Action"] = "all",
+			["Free Action"] = "all",
+			
 			-- Rogue
 			["Cheap Shot"] = "all",
 			["Kidney Shot"] = "all",
@@ -105,7 +385,9 @@
 			["Mind-numbing Poison"] = "mine",
 			["Dazed"] = "mine", -- blade twisting
 			["Hemorrhage"] = "mine",
-
+			["Ghostly Strike"] = "all",
+			["Garrote - Silence"] = "mine",
+			
 			-- Warlock
 			["Death Coil"] = "all",
 			["Fear"] = "all",
@@ -131,6 +413,9 @@
 			["Shadow Trance"] = "all",
 			["Fel Domination"] = "all",
 			["Shadow Ward"] = "all",
+			["Nether Protection"] = "all",
+			["Curse of Exhaustion"] = "all",
+			["Sacrifice"] = "all",
 
 			-- Priest
 			["Mind Control"] = "all",
@@ -150,10 +435,12 @@
 			["Devouring Plague"] = "mine",
 			["Starshards"] = "mine",
 			["Holy Fire"] = "mine",
-			["Chastise"] = "mine",
+			["Chastise"] = "all",
 			["Power Word: Shield"] = "all",
 			["Prayer of Mending"] = "all",
-
+			["Hex of Weakness"] = "all",
+			["Mind Soothe"] = "all",
+		
 			-- Mage
 			["Frost Nova"] = "all",
 			["Freeze"] = "all",
@@ -174,7 +461,13 @@
 			["Ice Barrier"] = "all",
 			["Presence of Mind"] = "all",
 			["Mana Shield"] = "all",
-
+			["Blazing Speed"] = "all",
+			["Invisibility"] = "all",
+			["Impact"] = "all",
+			["Frostbolt"] = "mine",
+			["Flamestrike"] = "mine",
+			["Evocation"] = "all",
+			
 			-- Warrior
 			["Charge Stun"] = "all",
 			["Concussion Blow"] = "all",
@@ -208,6 +501,10 @@
 			["Second Wind"] = "all",
 			["Shield Wall"] = "all",
 			["Sweeping Strikes"] = "all",
+			["Shield Block"] = "all",
+			["Recklessness"] = "all",
+			["Revenge Stun"] = "all",
+			["Taunt"] = "mine",
 
 			-- Druid
 			["Bash"] = "all",
@@ -235,14 +532,20 @@
 			["Challenging Roar"] = "all",
 			["Nature's Swiftness"] = "all",
 			["Abolish Poison"] = "all",
-
+			["Starfire Stun"] = "all",
+			["Dash"] = "all",
+			["Growl"] = "all",
+			["Tranquility"] = "all",
+			["Nature's Grasp"] = "all",
+			["Soothe Animal"] = "all",
+			
 			-- Hunter
 			["Freezing Trap"] = "all",
 			["Intimidation"] = "all",
 			["Scare Beast"] = "all",
 			["Scatter Shot"] = "all",
 			["The Beast Within"] = "all",
-			["Beastial Wrath"] = "all",
+			["Bestial Wrath"] = "all",
 			["Silencing Shot"] = "all",
 			["Entrapment"] = "all",
 			["Deterrence"] = "all",
@@ -260,6 +563,9 @@
 			["Black Arrow"] = "mine",
 			["Explosive Trap Effect"] = "mine",
 			["Immolation Trap Effect"] = "mine",
+			["Freezing Trap Effect"] = "all",
+			["Mend Pet"] = "all",
+			["Counterattack"] = "all",
 			-- Pet
 			["Poison Spit"] = "all", -- Serpent
 			["Scorpid Poison"] = "all",
@@ -281,7 +587,10 @@
 			["Lightning Shield"] = "all",
 			["Nature's Swiftness"] = "all",
 			["Mana Tide Totem"] = "all",
-
+			["Elemental Mastery"] = "all",
+			["Shamanistic Rage"] = "all",
+			["Focused Casting"] = "all",
+			
 			-- Paladin
 			["Hammer of Justice"] = "all",
 			["Repentance"] = "all",
@@ -299,8 +608,10 @@
 			["Judgement of the Crusader"] = "mine",
 			["Divine Favor"] = "all",
 			["Turn Undead"] = "all",
-
+			["Avenging Wrath"] = "all",
+			["Turn Evil"] = "all",
 		}
+		end
 		return profile
 	end
 
