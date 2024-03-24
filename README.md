@@ -38,3 +38,4 @@ The TBC client's API is quite limited compared to later versions with both the C
 * Pyralis for letting me butcher his config GUI code.
 * Cyprias for his LibAuraInfo, which I based my aura database on.
 * Theroxis for helping me debug!
+* Macumba for updating the default config and adding French spell names to the default config.
