@@ -112,20 +112,20 @@
 	---------------------------------------------------------------------------------------------
 
 	local function FormatTime(s)
-    if s > 3600 then
-        return format("%dh", ceil(s/3600)), s % 3600
-    elseif s > 60 then
-        return format("%dm", ceil(s/60)), s % 60
-    elseif s > 5 then
-        return format("|cffFFA500%d|r", floor(s)), s - floor(s)
-    elseif s > 3 then
-        return format("|cffFF0000%d|r", floor(s)), s - floor(s)
-    elseif s > 1 then
-        return format("|cffFF0000%.1f|r", s), (s*10 - floor(s*10)) / 10
-    else
-        return format("|cffFF0000%.1f|r", s), (s*10 - floor(s*10)) / 10
-    end
-end
+		if s > 3600 then
+			return format("%dh", ceil(s/3600)), s % 3600
+		elseif s > 60 then
+			return format("%dm", ceil(s/60)), s % 60
+		elseif s > 6 then
+			return floor(s), s - floor(s)
+		elseif s > 3 then
+			return format("|cffffff00%.1f|r", s), (s*10 - floor(s*10)) / 10
+		elseif s > 1 then
+			return format("|cffff0000%.1f|r", s), (s*10 - floor(s*10)) / 10
+		else
+			return format("|cffff0000.%d|r", s*10), (s*10 - floor(s*10)) / 10
+		end
+	end
 
 	local function UpdateTimer(self, elapsed)
 		if self.nextUpdate > 0 then
