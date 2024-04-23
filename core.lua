@@ -127,6 +127,24 @@
 		end
 	end
 
+--[[ Macumba's timers inspired by XiconPlateBuff's timer
+
+	local function FormatTime(s)
+		if s > 3600 then
+			return format("%dh", ceil(s/3600)), s % 3600
+		elseif s > 60 then
+			return format("%dm", ceil(s/60)), s % 60
+		elseif s > 6 then
+			return floor(s), s - floor(s)
+		elseif s > 3 then
+			return format("|cffffff00%.1f|r", s), (s*10 - floor(s*10)) / 10
+		elseif s > 1 then
+			return format("|cffff0000%.1f|r", s), (s*10 - floor(s*10)) / 10
+		else
+			return format("|cffff0000.%d|r", s*10), (s*10 - floor(s*10)) / 10
+		end
+	end ]]
+
 	local function UpdateTimer(self, elapsed)
 		if self.nextUpdate > 0 then
 			self.nextUpdate = self.nextUpdate - elapsed
@@ -571,7 +589,7 @@
 			local name, rank, icon, count, dtype, duration, timeLeft, isMine = UnitDebuff(unit, i)
 			if not name then break end
 
-			if isMine or (isMine == nil and duration and duration > 0) then
+			if timeLeft and (isMine or (isMine == nil and duration and duration > 0)) then
 				if PB:IsTracked(name, true) then
 					-- Check if we have an existing instance of this aura, ignore if we do. Needed due to forced UNIT_AURA updates on mouseover.
 					local _, _, _, aCount, _, _, _, _, expiration = PB:GetAuraInstance(guid, name)
@@ -587,7 +605,7 @@
 			local name, rank, icon, count, duration, timeLeft, isMine = UnitBuff(unit, i)
 			if not name then break end
 
-			if isMine or (isMine == nil and duration and duration > 0) then
+			if timeLeft and (isMine or (isMine == nil and duration and duration > 0)) then
 				if PB:IsTracked(name, true) then
 					-- Check if we have an existing instance of this aura, ignore if we do. Needed due to forced UNIT_AURA updates on mouseover.
 					local _, _, _, aCount, _, _, _, _, expiration = PB:GetAuraInstance(guid, name)
